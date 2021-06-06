@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+    flask:
+        build: .
+        restart: always
+        container_name: flask
+        ports:
+            - 8080:8080
+        volumes:
+            - ./:/deploy
