@@ -1,1 +1,5 @@
 __pycache__/
+nginx/ssl/*.key
+nginx/ssl/*.pem
+nginx/ssl/*.crt
+nginx/ssl/*.csr
