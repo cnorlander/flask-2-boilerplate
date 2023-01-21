@@ -1,1 +1,3 @@
-TIMEZONE='America/Vancouver'
+TIMEZONE = 'America/Vancouver'
+APP_SECRET = 'YOUR_SECRET_KEY'
+DEBUG_MODE = True

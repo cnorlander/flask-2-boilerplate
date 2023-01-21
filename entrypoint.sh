@@ -1,9 +1,8 @@
 #!/bin/bash
-date
 # Check python depenencies. Useful for development and autoupdating of dependencies on container reboot.
 # If you find you have issues with dependency compatability you may want to remove this or set static version numbers in requirements.txt
 echo "Checking Python Dependencies..."
-pip3 install -r requirements.txt | grep -v 'already satisfied'
+pip3 install -r requirements.txt --root-user-action=ignore | grep -v 'already satisfied'
 
 # Generate a self signed certificate for NGINX
 chmod +x ./nginx/ssl/generate-selfsigned.sh
