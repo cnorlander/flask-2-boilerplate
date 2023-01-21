@@ -10,4 +10,4 @@ chmod +x ./nginx/ssl/generate-selfsigned.sh
 
 # Boot the application with 5 workers using gthread workers. 
 # Uses --reload to restart gunicorn. Might want to remove for production.
-/usr/local/bin/gunicorn -b :8080 boilerplate:app --log-level=info --workers=5 -t 30 --worker-class=gthread --reload
+/usr/local/bin/gunicorn -b :8443 boilerplate:app --log-level=info --workers=5 -t 30 --worker-class=gthread --certfile=nginx/ssl/certificate.crt --keyfile=nginx/ssl/server.key --reload
