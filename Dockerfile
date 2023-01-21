@@ -6,7 +6,8 @@ RUN apt-get install -y python3 python3-dev python3-pip openssl
 VOLUME /deploy
 WORKDIR /deploy
 COPY requirements.txt .
-RUN pip3 install setuptools
 RUN pip3 install -r requirements.txt
+COPY entrypoint.sh .
+RUN ["chmod", "777", "./entrypoint.sh"]
 EXPOSE 8080
-CMD ./entrypoint.sh
+ENTRYPOINT [ "/bin/bash", "./entrypoint.sh" ] 

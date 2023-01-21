@@ -7,6 +7,7 @@ This is a basic Flask web application created to be a jumping off point for futu
 - A Fancy logon page.
 - A menu template
 - Some basic page templates.
+- A user managment page and simple user roles
 - Docker and Docker-Compose files for easy deployment
 - Gunicorn WSGI HTTP Server
 - NGINX for reverse proxy and serving static files

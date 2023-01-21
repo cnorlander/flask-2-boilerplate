@@ -1,3 +1,4 @@
+setuptools
 dataclasses
 Flask[async]>=2.0.1
 Flask-Login>=0.5.0
