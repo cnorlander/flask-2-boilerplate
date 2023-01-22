@@ -5,3 +5,4 @@ nginx/ssl/*.crt
 nginx/ssl/*.csr
 /venv/
 /.idea/
+/database.db
