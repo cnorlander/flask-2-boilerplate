@@ -4,6 +4,7 @@ VOLUME /deploy
 WORKDIR /deploy
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
+ENV PYTHONUNBUFFERED=0
 COPY entrypoint.sh .
 RUN ["chmod", "+x", "./entrypoint.sh"]
 EXPOSE 8443

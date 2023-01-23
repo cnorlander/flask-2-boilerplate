@@ -2,6 +2,7 @@ from flask import Flask
 import time, asyncio, os
 import boilerplate.config as config
 from boilerplate.app import app
+import boilerplate.modules.user.user_controller
 
 __author__ = "Corey Norlander"
 __copyright__ = "Copyright 2023, Corey Norlander"
