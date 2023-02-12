@@ -1,7 +1,9 @@
 from boilerplate.app import app
 from boilerplate.db import db
-import boilerplate.modules.user.user_model as user_model
+from flask import render_template
+from boilerplate.modules.user.user_model import User
 
 @app.get('/users')
 def user_list():
-    return "Test!"
+    all_users = User.query.all()
+    return render_template("user/user_list.html", all_users=all_users)

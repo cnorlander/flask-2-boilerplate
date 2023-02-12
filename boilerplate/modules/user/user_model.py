@@ -1,24 +1,36 @@
 from boilerplate.db import db
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql import func
 import bcrypt
+import uuid
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    is_active = db.Column(db.Boolean, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    uuid = db.Column(db.String(32), default=uuid.uuid4().hex, nullable=False, unique=True)
+    active = db.Column(db.Boolean, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.Text, nullable=False)
-    creation_time = db.Column(db.DateTime, nullable=False)
+    creation_time = db.Column(db.DateTime, server_default=func.now(), nullable=False)
 
     def __init__(self, email, first_name, last_name, password):
-        self.is_active = True
+        self.active = True
         self.email = email
         self.first_name = first_name
         self.last_name = last_name
         self.password = hash_password(password)
-        self.creation_time = datetime.now()
+
+    def is_authenticated(self):
+        return self.active
+
+    def is_active(self):
+        return self.active
+
+    def is_anonymous(self):
+        return False
+
 
 
 def hash_password(password):
