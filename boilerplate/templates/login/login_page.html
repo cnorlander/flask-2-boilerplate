@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "components/global_head.html" %}
+    <title>Login</title>
+    <link href="/static/css/login.css" rel="stylesheet">
+    <script src="/static/js/login.js"></script>
+</head>
+<body>
+<!-- Flash messages appear at the top of the screen -->
+<section>
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-danger alert-dismissible fade show mt-2 ms-2 me-2" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</section>
+
+<!-- Login Box -->
+<section>
+    <div class="login-box">
+        <div class="login">
+            <img style="width: 60%;"
+                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Flask_logo.svg/1280px-Flask_logo.svg.png">
+            <h2>Login to Flask 2 Boilerplate App</h2>
+            <form action="{{url_for('post_login_user')}}" method="POST">
+                <div class="form-floating mb-2">
+                    <input name="email" type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                    <label for="email">Email address</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input name="password" type="password" class="form-control" id="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
+                <div class="d-grid gap-2 mb-3">
+                    <input type="submit" value="Login" class="btn btn-primary btn-lg">
+                </div>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#passwordResetModal" onclick="populateEmail()">Forgot Password</a>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Forgot Password Modal -->
+<section>
+    <div class="modal fade" id="passwordResetModal" tabindex="-1" aria-labelledby="passwordResetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="passwordResetModalLabel">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Please confirm your email address. If your email address is in the system you will recieve an email with a
+                        link you can use to reset your password.
+                    </p>
+                    <input type="email" id="email-confirm" class="form-control" placeholder="Enter Email Address"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Send Password Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

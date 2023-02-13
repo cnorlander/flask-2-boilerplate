@@ -31,7 +31,15 @@ class User(db.Model):
     def is_anonymous(self):
         return False
 
+    def get_id(self):
+        return self.uuid
 
+    def validate_password(self, input_password):
+        return check_password(input_password, self.password)
+
+
+def get_by_uuid(user_uuid):
+    return User.query.filter_by(uuid=user_uuid).first()
 
 def hash_password(password):
     salt = bcrypt.gensalt()

@@ -1,8 +1,10 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 import time, asyncio, os
 import boilerplate.config as config
 from boilerplate.app import app
+from flask_login import login_required
 import boilerplate.modules.user.user_controller
+import boilerplate.modules.login.login_controller
 
 __author__ = "Corey Norlander"
 __copyright__ = "Copyright 2023, Corey Norlander"
@@ -16,7 +18,6 @@ time.tzset()
 
 
 @app.route('/')
-async def hello_world():
-    t = time.localtime()
-    current_time = time.strftime("%H:%M:%S", t)
-    return f"<h1>{current_time}</h1>"
+@login_required
+def index():
+    return redirect(url_for("get_user_list"))

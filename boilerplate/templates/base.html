@@ -1,12 +1,26 @@
-<!doctype html>
-<title>{% block title %}{% endblock %}</title>
-    {% include "components/menu.html" %}
-<section class="content">
-  <header>
-    {% block header %}{% endblock %}
-  </header>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-  {% block content %}{% endblock %}
-</section>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+        {% include "components/global_head.html" %}
+        {% block local_head %}{% endblock %}
+    </head>
+    <body>
+        <header>
+            {% include "components/menu.html" %}
+        </header>
+        <section>
+            {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+        </section>
+        <section>
+            {% block content %}{% endblock %}
+        </section>
+        <footer>
+            Flask Project Footer
+        </footer>
+    </body>
+{% block local_foot %}{% endblock %}
+</html>

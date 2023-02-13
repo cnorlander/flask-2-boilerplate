@@ -1,0 +1,10 @@
+a {
+	color: #05a4ad;
+	cursor: pointer;
+}
+a:visited {
+	color: #05a4ad;
+}
+a:hover {
+	color: #06dae6;
+}
