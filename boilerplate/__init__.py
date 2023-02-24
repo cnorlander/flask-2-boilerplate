@@ -5,6 +5,7 @@ from boilerplate.app import app
 from flask_login import login_required
 import boilerplate.modules.user.user_controller
 import boilerplate.modules.login.login_controller
+import boilerplate.modules.role.role_controller
 
 __author__ = "Corey Norlander"
 __copyright__ = "Copyright 2023, Corey Norlander"

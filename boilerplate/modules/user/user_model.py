@@ -15,7 +15,7 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     creation_time = db.Column(db.DateTime, server_default=func.now(), nullable=False)
 
-    def __init__(self, email, first_name, last_name, password):
+    def __init__(self, email: str, first_name: str, last_name: str, password: str):
         self.active = True
         self.email = email
         self.first_name = first_name
@@ -34,19 +34,19 @@ class User(db.Model):
     def get_id(self):
         return self.uuid
 
-    def validate_password(self, input_password):
+    def validate_password(self, input_password: str):
         return check_password(input_password, self.password)
 
 
-def get_by_uuid(user_uuid):
+def get_by_uuid(user_uuid: str):
     return User.query.filter_by(uuid=user_uuid).first()
 
-def hash_password(password):
+def hash_password(password: str):
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed
 
-def check_password(password, hashed_password):
+def check_password(password: str, hashed_password: bytes):
     is_valid_password = bcrypt.checkpw(password.encode('utf8'), hashed_password)
     return is_valid_password
 
