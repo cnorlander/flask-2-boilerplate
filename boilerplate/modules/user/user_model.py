@@ -4,8 +4,20 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql import func
 import bcrypt
 import uuid
+from dataclasses import dataclass
 
+# Using Python Dataclasses. Haven't seen this with many Flask examples but it works well for automatic JSON conversion:
+# https://docs.python.org/3/library/dataclasses.html
+@dataclass
 class User(db.Model):
+    id: int
+    uuid: str
+    active: bool
+    first_name: str
+    last_name: str
+    email: str
+    creation_time: datetime
+
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     uuid = db.Column(db.String(32), default=uuid.uuid4().hex, nullable=False, unique=True)
     active = db.Column(db.Boolean, nullable=False)

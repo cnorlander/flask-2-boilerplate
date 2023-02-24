@@ -1,5 +1,6 @@
 import boilerplate.config as config
 import boilerplate.modules.user.user_model
+import boilerplate.modules.role.role_model
 from boilerplate.db import db
 from flask import Flask
 
@@ -18,4 +19,6 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
     db.session.commit()
+    boilerplate.modules.role.role_model.seed_roles_if_required()
     boilerplate.modules.user.user_model.seed_user_if_required()
+
