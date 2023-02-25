@@ -1,4 +1,5 @@
 from boilerplate.db import db
+from boilerplate.modules.role import get_action_names
 from sqlalchemy.sql import func
 from sqlalchemy.exc import IntegrityError
 from typing import List
@@ -40,20 +41,22 @@ class Role(db.Model):
         self.hidden = hidden
         self.name = name
         self.description = description
-        self.actions = json.dumps(actions)
+        self.actions = actions
 
-#TODO: Write code to cleanup old removed actions.
-def action_clean_up():
-    pass
+# updates system level roles to reflect all possible actions
+def update_system_roles():
+    rows_changed = Role.query.filter_by(system=True).update({'actions':get_action_names()})
+    db.session.commit()
 
 # Will create a role if a role with that name doesn't already exist
 def create_if_not_exists(role: Role):
-    all_roles = db.session.query(Role).filter_by(name=role.name).all()
-    if len(all_roles) == 0:
+    db_roles = db.session.query(Role).filter_by(name=role.name).all()
+    if len(db_roles) == 0:
         try:
             db.session.add(role)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             # Thar be threading afoot. Ignoring integrity errors here, other threads already having created the user.
             return
 
@@ -61,4 +64,4 @@ def create_if_not_exists(role: Role):
 def seed_roles_if_required():
     create_if_not_exists(Role("System", "Global Role for the System it's self.", [], system=True, hidden=True))
     create_if_not_exists(Role("System Admin", "Global Role for a System Admin.", [], system=True, hidden=False))
-    create_if_not_exists(Role("Test Role", "Global Role for a System Admin.", [{"item": 1},{"item": 1}]))
+    create_if_not_exists(Role("Test Role", "Global Role for a System Admin.", [get_action_names()[1]]))

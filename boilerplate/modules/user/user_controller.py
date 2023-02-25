@@ -17,4 +17,4 @@ def get_user_list_json():
 register_action("read_users_list", "users", "Allows a user to see the list of users in a system.")
 register_action("create_or_edit_user", "users", "Allows a user create or edit a user.", ("read_users_list",))
 register_action("disable_user", "users", "Allows a user to disable a user.", ("read_users_list",))
-register_action("create_system_admins", "users", "Allows a user create System Admins.")
+register_action("create_system_admins", "users", "Allows a user create System Admins.", system_only=True)

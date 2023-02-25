@@ -14,7 +14,7 @@ login_manager.login_view = 'get_login_page'
 @login_manager.user_loader
 def load_user(user_id: str):
     current_user = get_by_uuid(user_id)
-    if not current_user.active:
+    if (current_user is None) or (not current_user.active):
         flash("Your account with this service is no longer active. If you believe this to be in error please contact an admin and have your account reactivated")
         #return abort(403)
     return get_by_uuid(user_id)
