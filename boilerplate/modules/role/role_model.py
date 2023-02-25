@@ -45,8 +45,12 @@ class Role(db.Model):
 
 # updates system level roles to reflect all possible actions
 def update_system_roles():
-    rows_changed = Role.query.filter_by(system=True).update({'actions':get_action_names()})
-    db.session.commit()
+    try:
+        rows_changed = Role.query.filter_by(system=True).update({'actions':get_action_names()})
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
 
 # Will create a role if a role with that name doesn't already exist
 def create_if_not_exists(role: Role):

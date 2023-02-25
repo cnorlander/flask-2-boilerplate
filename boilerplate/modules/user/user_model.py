@@ -70,5 +70,6 @@ def seed_user_if_required():
             db.session.add(User("default@default.com", "default", "user", "iloveflask!"))
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             # Thar be threading afoot. Ignoring integrity errors here, other threads already having created the user.
             return
