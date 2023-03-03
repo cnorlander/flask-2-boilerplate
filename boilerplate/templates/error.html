@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "components/global_head.html" %}
+    <title>{{http_status_code}} Error</title>
+    <link href="/static/css/login.css" rel="stylesheet">
+    <script src="/static/js/login.js"></script>
+</head>
+<body>
+<!-- Login Box -->
+<section>
+    <div class="login-box">
+        <div class="login">
+           <h1>{{http_status_code}} Error</h1>
+           <p>{{message}}</p>
+           <pre>Error ID: {{error_id}}</pre>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -64,11 +64,6 @@ def post_login_user():
     # redirect the user where they wanted to go.
     return redirect(next_page or "/")
 
-@app.get("/testreset")
-def get_testreset():
-    send_password_reset('default@default.com')
-    return redirect(url_for("get_login_page"))
-
 @app.get("/logout")
 def get_logout():
     logout_user()

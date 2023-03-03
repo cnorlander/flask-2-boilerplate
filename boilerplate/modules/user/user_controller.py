@@ -1,6 +1,6 @@
 from boilerplate.app import app
 from boilerplate.modules.role import register_action
-from flask import render_template, request, flash
+from flask import render_template, request, flash, redirect, url_for
 from boilerplate.modules.user.user_model import User, send_password_reset
 from boilerplate.utils.email import validate_address
 
@@ -21,16 +21,17 @@ def get_user_list_json():
 
 @app.get('/password-reset')
 def get_complete_password_reset():
-    return func.now()
+    return "Password Reset Page Coming Soon"
 
 # API route to perform a password reset Note: might want to rate limit this.
-@app.post('/api/v1/users/password-reset')
+@app.post('/password-reset')
 def post_send_password_reset():
-    email_address = request.json.get("email")
+    email_address = request.form.get("email")
     if email_address and validate_address(email_address):
         result = send_password_reset(email_address)
         if result == "error":
-            return {"status": "error"}
+            flash("An error has occured when trying to perform the password reset")
+            return redirect(url_for("get_login_page"))
         # Always returning a success even if the user isn't present or sending is rate limited to avoid being able to
         # identify if an email is in the system or not.
         return {"status": "success"}

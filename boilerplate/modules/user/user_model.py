@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.sql import func
 from flask import url_for
+import boilerplate.config as config
 import bcrypt
 import base64
 import uuid
@@ -75,7 +76,7 @@ def send_password_reset(email: str):
     if user:
         # Rate limit the responses prevents a bot from spamming the user with password resets
         difference = datetime.utcnow() - user.reset_time
-        if difference.hour < 1:
+        if difference.seconds < 3600:
             return "rate-limit"
 
         # Create the URL safe unique password reset code and save it to the database
@@ -86,7 +87,7 @@ def send_password_reset(email: str):
         except SQLAlchemyError:
             db.session.rollback()
             return "error"
-        reset_url = url_for("get_complete_password_reset") + "?uuid=" + user.uuid + "&reset-code=" + user.reset_code
+        reset_url = f"{config.BASE_URL}/{url_for('get_complete_password_reset')}?uuid={user.uuid}&reset-code{user.reset_code}"
 
         # TODO: You will need to find the send_password_reset_email function in boilerplate.utils.email and implement it yourself!
         send_password_reset_email(user.email, reset_url)
