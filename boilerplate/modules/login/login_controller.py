@@ -1,7 +1,7 @@
 from boilerplate.app import app
 from flask import Flask, render_template, redirect, request, flash, abort, url_for
 from flask_login import LoginManager, login_user, logout_user
-from boilerplate.modules.user.user_model import User, get_by_uuid
+from boilerplate.modules.user.user_model import User, get_by_uuid, send_password_reset
 from boilerplate.utils.urls import is_safe_url
 from boilerplate.db import db
 from flask import render_template
@@ -64,7 +64,10 @@ def post_login_user():
     # redirect the user where they wanted to go.
     return redirect(next_page or "/")
 
-
+@app.get("/testreset")
+def get_testreset():
+    send_password_reset('default@default.com')
+    return redirect(url_for("get_login_page"))
 
 @app.get("/logout")
 def get_logout():
