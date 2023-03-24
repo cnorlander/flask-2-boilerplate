@@ -58,6 +58,19 @@ class User(db.Model):
     def validate_password(self, input_password: str):
         return check_password(input_password, self.password)
 
+    def validate_reset_code(self, reset_code):
+        difference = datetime.utcnow() - self.reset_time
+        if (difference.seconds < config.RESET_CODE_VALIDITY * 60) and self.reset_code == reset_code:
+            return True
+        return False
+
+    def update_password(self, new_password):
+        self.password = hash_password(new_password)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+
 
 def get_by_uuid(user_uuid: str):
     return User.query.filter_by(uuid=user_uuid).first()
@@ -75,8 +88,7 @@ def send_password_reset(email: str):
     user = User.query.filter_by(email=email).first()
     if user:
         # Rate limit the responses prevents a bot from spamming the user with password resets
-        difference = datetime.utcnow() - user.reset_time
-        if difference.seconds < 3600:
+        if user.validate_reset_code():
             return "rate-limit"
 
         # Create the URL safe unique password reset code and save it to the database

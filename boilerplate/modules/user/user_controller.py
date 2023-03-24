@@ -1,6 +1,7 @@
 from boilerplate.app import app
+import boilerplate.config as config
 from boilerplate.modules.role import register_action
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, abort
 from boilerplate.modules.user.user_model import User, send_password_reset
 from boilerplate.utils.email import validate_address
 
@@ -12,19 +13,57 @@ def get_user_list():
     all_users = User.query.all()
     return render_template("user/user_list.html", all_users=all_users)
 
-# API Route to show all users
-# TODO: Lock this down using the role engine when possible
-@app.get('/api/v1/users/')
-def get_user_list_json():
-    all_users = User.query.all()
-    return all_users
 
 @app.get('/password-reset')
-def get_complete_password_reset():
-    return "Password Reset Page Coming Soon"
+def get_password_reset_screen():
+    user_uuid = request.args.get("uuid")
+    reset_code = request.args.get("reset-code")
+    # Ensure all parameters are present
+    if not (user_uuid or reset_code):
+        return abort(400)
+
+    # Lookup the correct user and ensure they exist
+    user = User.get_by_uuid(user_uuid)
+    if not user:
+        return abort(403)
+
+    # Validate the users reset code
+    if not user.validate_reset_code(reset_code):
+        return abort(403, detailed_message=f"This password reset link is no longer valid. "
+                                           f"Password reset links are only valid for a period of {config.RESET_CODE_VALIDITY} Minutes.")
+
+    # Show the login screen
+    return render_template("user/password-reset.html")
+
+@app.post('/password-reset')
+def post_complete_password_reset():
+    user_uuid = request.form.get("uuid")
+    reset_code = request.form.get("reset-code")
+    password = request.form.get("password")
+    password_confirm = request.form.get("password_confirm")
+
+    # Ensure all parameters are present
+    if not (user_uuid or reset_code or password or password_confirm):
+        return abort(400)
+
+    # Lookup the correct user and ensure they exist
+    user = User.get_by_uuid(user_uuid)
+    if not user:
+        return abort(403)
+
+    # Validate the users reset code
+    if not user.validate_reset_code(reset_code):
+        return abort(403, detailed_message=f"This password reset link is no longer valid. "
+                                           f"Password reset links are only valid for a period of {config.RESET_CODE_VALIDITY} Minutes.")
+
+    # Update the password
+    user.update_password(password)
+
+    # Show the login screen
+    return render_template("user/password-reset.html")
 
 # API route to perform a password reset Note: might want to rate limit this.
-@app.post('/password-reset')
+@app.post('/send-password-reset')
 def post_send_password_reset():
     email_address = request.form.get("email")
     if email_address and validate_address(email_address):

@@ -47,21 +47,23 @@
     <div class="modal fade" id="passwordResetModal" tabindex="-1" aria-labelledby="passwordResetModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="passwordResetModalLabel">Reset Password</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        Please confirm your email address. If your email address is in the system you will recieve an email with a
-                        link you can use to reset your password.
-                    </p>
-                    <input type="email" id="email-confirm" class="form-control" placeholder="Enter Email Address"/>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Send Password Reset</button>
-                </div>
+                <form action="{{url_for('post_send_password_reset')}}" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="passwordResetModalLabel">Reset Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Please confirm your email address. If your email address is in the system you will receive an email with a
+                            link you can use to reset your password.
+                        </p>
+                        <input type="email" id="email-confirm" class="form-control" placeholder="Enter Email Address"/>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Send Password Reset</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
