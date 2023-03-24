@@ -10,12 +10,13 @@ from flask import render_template
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'get_login_page'
+login_manager.login_message = ""
 
 @login_manager.user_loader
 def load_user(user_id: str):
     current_user = get_by_uuid(user_id)
     if (current_user is None) or (not current_user.active):
-        flash("Your account with this service is no longer active. If you believe this to be in error please contact an admin and have your account reactivated")
+        flash("Your account with this service is no longer active. If you believe this to be in error please contact an admin and have your account reactivated", "error")
         #return abort(403)
     return get_by_uuid(user_id)
 
@@ -40,21 +41,22 @@ def post_login_user():
     print(db_user, flush=True)
     # If the user is not in the database toss flash a login error and return them to the login screen.
     if not db_user:
-        flash("The credentials you supplied are incorrect. Please check your username and password and try again.")
+        flash("The credentials you supplied are incorrect. Please check your username and password and try again.", "error")
         return redirect(url_for("get_login_page"))
 
     # Validate the users password is correct. If not toss a generic login error.
     if not db_user.validate_password(input_password):
-        flash("The credentials you supplied are incorrect. Please check your username and password and try again.")
+        flash("The credentials you supplied are incorrect. Please check your username and password and try again.", "error")
         return redirect(url_for("get_login_page"))
 
     # Ensure the users account is still active. If not toss a deactivated.
     if not db_user.active:
-        flash(f"The account with email address \"{db_user.email}\" is deactivated and cannot login. If you believe this is in error please contact an admin.")
+        flash(f"The account with email address \"{db_user.email}\" is deactivated and cannot login. If you believe this is in error please contact an admin.", "error")
         return redirect(url_for("get_login_page"))
 
     # Log the user in!
     login_user(db_user)
+    db_user.update_last_logon()
 
     # Determine where the user intends to go next and if the origin is not the same as the request toss a 400.
     next_page = request.args.get('next')

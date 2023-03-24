@@ -17,6 +17,5 @@ time.tzset()
 
 
 @app.route('/')
-@login_required
 def index():
     return redirect(url_for("get_user_list"))

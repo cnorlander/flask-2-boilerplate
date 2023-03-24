@@ -7,15 +7,6 @@
     <script src="/static/js/login.js"></script>
 </head>
 <body>
-<!-- Flash messages appear at the top of the screen -->
-<section>
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-danger alert-dismissible fade show mt-2 ms-2 me-2" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-</section>
 
 <!-- Login Box -->
 <section>
@@ -23,7 +14,37 @@
         <div class="login">
             <img style="width: 60%;"
                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Flask_logo.svg/1280px-Flask_logo.svg.png">
-            <h2>Login to Flask 2 Boilerplate App</h2>
+            <h2>Login to Flask 2 Boilerplate</h2>
+            {% with messages = get_flashed_messages(category_filter=["message"]) %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-primary alert-dismissible fade show mt-2 ms-2 me-2 text-start" role="alert">
+                            {{ message}}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                {% if errors %}
+                    {% for error in errors %}
+                        <div class="alert alert-danger alert-dismissible fade show mt-2 ms-2 me-2 text-start" role="alert">
+                            {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% with successes = get_flashed_messages(category_filter=["success"]) %}
+                {% if successes %}
+                    {% for success in successes %}
+                        <div class="alert alert-success alert-dismissible fade show mt-2 ms-2 me-2 text-start" role="alert">
+                            {{ success}}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             <form action="{{url_for('post_login_user')}}" method="POST">
                 <div class="form-floating mb-2">
                     <input name="email" type="email" class="form-control" id="email" placeholder="name@example.com" required>

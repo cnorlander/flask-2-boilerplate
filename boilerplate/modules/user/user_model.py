@@ -59,19 +59,30 @@ class User(db.Model):
         return check_password(input_password, self.password)
 
     def validate_reset_code(self, reset_code: str):
+        if self.reset_code == "NORESET":
+            return False
         difference = datetime.utcnow() - self.reset_time
-        if (difference.seconds < config.RESET_CODE_VALIDITY * 60) and self.reset_code == reset_code:
+        if (difference.seconds < config.PASSWORD_RESET_CODE_VALIDITY * 60) and self.reset_code == reset_code:
             return True
         return False
 
     def has_reset_code(self):
         difference = datetime.utcnow() - self.reset_time
-        if (difference.seconds < config.RESET_CODE_VALIDITY * 60):
+        if (difference.seconds < config.PASSWORD_RESET_CODE_VALIDITY * 60):
             return True
         return False
 
     def update_password(self, new_password: str):
         self.password = hash_password(new_password)
+        self.reset_code = "NORESET"
+        self.reset_time = datetime.fromtimestamp(0)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+
+    def update_last_logon(self):
+        self.last_login = func.now()
         try:
             db.session.commit()
         except IntegrityError:
@@ -89,6 +100,22 @@ def hash_password(password: str):
 def check_password(password: str, hashed_password: bytes):
     is_valid_password = bcrypt.checkpw(password.encode('utf8'), hashed_password)
     return is_valid_password
+
+def check_password_requirements(new_password: str):
+    password_rules_broken = []
+    if len(new_password) < config.PASSWORD_MIN_CHARACTERS:
+        password_rules_broken.append(f"Password is too short. Passwords should contain at least {config.PASSWORD_MIN_CHARACTERS} characters.")
+    if len(new_password) > config.PASSWORD_MAX_CHARACTERS:
+        password_rules_broken.append(f"Password is too long. Passwords should contain at most {config.PASSWORD_MAX_CHARACTERS} characters.")
+    if config.PASSWORD_REQUIRE_NUMERALS and (not any(char.isdigit() for char in new_password)):
+        password_rules_broken.append(f"Password must contain at least one number.")
+    if config.PASSWORD_REQUIRE_UPPER_CASE and (not any(char.isupper() for char in new_password)):
+        password_rules_broken.append(f"Password must contain at least one upper case letter.")
+    if config.PASSWORD_REQUIRE_LOWER_CASE and (not any(char.islower() for char in new_password)):
+        password_rules_broken.append(f"Password must contain at least one lower case letter.")
+    if config.PASSWORD_REQUIRE_SPECIAL_CHARACTERS and (not any(char in config.PASSWORD_LIST_OF_ALLOWED_SPECIAL_CHARACTERS for char in new_password)):
+        password_rules_broken.append(f"Password must contain at least one special symbol.")
+    return password_rules_broken
 
 def send_password_reset(email: str):
     user = User.query.filter_by(email=email).first()

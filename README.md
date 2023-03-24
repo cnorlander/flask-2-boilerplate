@@ -2,7 +2,8 @@
 ## Work in progress!
 
 This is a basic Flask web application created to be a jumping off point for future apps. Some features will include:
-- [X] Basic Auth w/ Flask Logon and Bcrypt.
+- [X] Auth w/ Flask Logon and Bcrypt.
+- [X] Password Reset Feature.
 - [X] Flask-SQLAlchemy for ORM.
 - [X] SQLite DB file for portability
 - [X] A Fancy logon page.
