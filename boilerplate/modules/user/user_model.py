@@ -34,7 +34,7 @@ class User(db.Model):
     last_login = db.Column(db.DateTime, default=datetime.fromtimestamp(0), nullable=False)
     creation_time = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     reset_code = db.Column(db.String(32), default="NORESET", nullable=False, unique=False)
-    reset_time = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    reset_time = db.Column(db.DateTime, default=datetime.fromtimestamp(0), nullable=False)
 
     def __init__(self, email: str, first_name: str, last_name: str, password: str):
         self.active = True
