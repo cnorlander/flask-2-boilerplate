@@ -58,13 +58,19 @@ class User(db.Model):
     def validate_password(self, input_password: str):
         return check_password(input_password, self.password)
 
-    def validate_reset_code(self, reset_code):
+    def validate_reset_code(self, reset_code: str):
         difference = datetime.utcnow() - self.reset_time
         if (difference.seconds < config.RESET_CODE_VALIDITY * 60) and self.reset_code == reset_code:
             return True
         return False
 
-    def update_password(self, new_password):
+    def has_reset_code(self):
+        difference = datetime.utcnow() - self.reset_time
+        if (difference.seconds < config.RESET_CODE_VALIDITY * 60):
+            return True
+        return False
+
+    def update_password(self, new_password: str):
         self.password = hash_password(new_password)
         try:
             db.session.commit()
@@ -88,7 +94,7 @@ def send_password_reset(email: str):
     user = User.query.filter_by(email=email).first()
     if user:
         # Rate limit the responses prevents a bot from spamming the user with password resets
-        if user.validate_reset_code():
+        if user.has_reset_code():
             return "rate-limit"
 
         # Create the URL safe unique password reset code and save it to the database
@@ -99,7 +105,7 @@ def send_password_reset(email: str):
         except SQLAlchemyError:
             db.session.rollback()
             return "error"
-        reset_url = f"{config.BASE_URL}/{url_for('get_complete_password_reset')}?uuid={user.uuid}&reset-code{user.reset_code}"
+        reset_url = f"{config.BASE_URL}/{url_for('get_password_reset_screen')}?uuid={user.uuid}&reset-code{user.reset_code}"
 
         # TODO: You will need to find the send_password_reset_email function in boilerplate.utils.email and implement it yourself!
         send_password_reset_email(user.email, reset_url)

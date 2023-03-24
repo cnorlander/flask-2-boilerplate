@@ -69,12 +69,14 @@ def post_send_password_reset():
     if email_address and validate_address(email_address):
         result = send_password_reset(email_address)
         if result == "error":
-            flash("An error has occured when trying to perform the password reset")
+            flash("Could not reset password due to a system error. Please contact support to resolve this issue.")
             return redirect(url_for("get_login_page"))
         # Always returning a success even if the user isn't present or sending is rate limited to avoid being able to
         # identify if an email is in the system or not.
-        return {"status": "success"}
-    return {"status": "error"}
+        flash("If you have an account registered in the system you should receive an email shortly with instructions to reset your password.")
+        return redirect(url_for("get_login_page"))
+    flash("Could not reset password. Please contact support to resolve this issue.")
+    return redirect(url_for("get_login_page"))
 
 register_action("read_users_list", "users", "Allows a user to see the list of users in a system.")
 register_action("create_or_edit_user", "users", "Allows a user create or edit a user.", ("read_users_list",))
