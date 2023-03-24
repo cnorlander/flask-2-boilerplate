@@ -2,7 +2,7 @@ from boilerplate.app import app
 import boilerplate.config as config
 from boilerplate.modules.role import register_action
 from flask import render_template, request, flash, redirect, url_for, abort
-from boilerplate.modules.user.user_model import User, send_password_reset
+from boilerplate.modules.user.user_model import User, send_password_reset, get_by_uuid
 from boilerplate.utils.email import validate_address
 
 from sqlalchemy.sql import func
@@ -23,17 +23,17 @@ def get_password_reset_screen():
         return abort(400)
 
     # Lookup the correct user and ensure they exist
-    user = User.get_by_uuid(user_uuid)
+    user = get_by_uuid(user_uuid)
     if not user:
         return abort(403)
 
     # Validate the users reset code
     if not user.validate_reset_code(reset_code):
-        return abort(403, detailed_message=f"This password reset link is no longer valid. "
+        return abort(403, description=f"This password reset link is no longer valid. "
                                            f"Password reset links are only valid for a period of {config.RESET_CODE_VALIDITY} Minutes.")
 
     # Show the login screen
-    return render_template("user/password-reset.html")
+    return render_template("user/password-reset.html", reset_code=reset_code, user_uuid=user_uuid)
 
 @app.post('/password-reset')
 def post_complete_password_reset():

@@ -5,39 +5,44 @@ import uuid
 
 #TODO: Add logging to all these errors
 @app.errorhandler(400)
-def bad_request(error, debug=None, detailed_message=None):
+def bad_request(error):
     error_id = base64.urlsafe_b64encode(uuid.uuid4().bytes).decode("utf-8").strip("==")
     http_status_code = 400
     message = "Bad Request. Something was wrong with the data you submitted to the server. " \
               "Please Try Again. If this error continues to occur please report this error."
-    message = detailed_message if detailed_message else message
-    return render_template('error.html', http_status_code=http_status_code, error=str(error), debug=debug, message=message, error_id=error_id), http_status_code
+    if error.description:
+        message = error.description
+    return render_template('error.html', http_status_code=http_status_code, error=str(error), message=message, error_id=error_id), http_status_code
 
 @app.errorhandler(403)
-def forbidden(error, debug=None, detailed_message=None):
+def forbidden(error):
     error_id = base64.urlsafe_b64encode(uuid.uuid4().bytes).decode("utf-8").strip("==")
     http_status_code = 403
     message = "Forbidden. You do not have permission to perform this action."
-    message = detailed_message if detailed_message else message
-    return render_template('error.html', http_status_code=http_status_code, error=str(error), debug=debug, message=message, error_id=error_id), http_status_code
+    print("Description: ", error.description, flush=True)
+    if error.description:
+        message = error.description
+    return render_template('error.html', http_status_code=http_status_code, error=str(error), message=message, error_id=error_id), http_status_code
 
 @app.errorhandler(404)
-def page_not_found(error, debug=None, detailed_message=None):
+def page_not_found(error):
     error_id = base64.urlsafe_b64encode(uuid.uuid4().bytes).decode("utf-8").strip("==")
     http_status_code = 404
     message = "Not Found. The resource you requested could not be found. " \
               "Please Try Again. If this error continues to occur please report this error."
-    message = detailed_message if detailed_message else message
-    return render_template('error.html', http_status_code=http_status_code, error=str(error), debug=debug, message=message, error_id=error_id), http_status_code
+    if error.description:
+        message = error.description
+    return render_template('error.html', http_status_code=http_status_code, error=str(error), message=message, error_id=error_id), http_status_code
 
 @app.errorhandler(500)
-def internal_server_error(error, debug=None, detailed_message=None):
+def internal_server_error(error):
     error_id = base64.urlsafe_b64encode(uuid.uuid4().bytes).decode("utf-8").strip("==")
     http_status_code = 500
     message = "Internal Server Error. Something went wrong and the server could not recover. " \
               "Please Try Again. If this error continues to occur please report this error."
-    message = detailed_message if detailed_message else message
-    return render_template('error.html', http_status_code=http_status_code, error=str(error), debug=debug, message=message, error_id=error_id), http_status_code
+    if error.description:
+        message = error.description
+    return render_template('error.html', http_status_code=http_status_code, error=str(error), message=message, error_id=error_id), http_status_code
 
 @app.get("/errors/400")
 def error_test_400():

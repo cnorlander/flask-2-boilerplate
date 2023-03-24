@@ -105,7 +105,7 @@ def send_password_reset(email: str):
         except SQLAlchemyError:
             db.session.rollback()
             return "error"
-        reset_url = f"{config.BASE_URL}/{url_for('get_password_reset_screen')}?uuid={user.uuid}&reset-code{user.reset_code}"
+        reset_url = f"{config.BASE_URL}{url_for('get_password_reset_screen')}?uuid={user.uuid}&reset-code={user.reset_code}"
 
         # TODO: You will need to find the send_password_reset_email function in boilerplate.utils.email and implement it yourself!
         send_password_reset_email(user.email, reset_url)
