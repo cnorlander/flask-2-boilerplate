@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block head %}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>Roles</h1>
+    <p>
+      Here are a list of users in the system.
+    </p>
+
+    {% for role in roles %}
+        {% set feature_namespace = namespace(feature="") %}
+        <h3>{{role.name}}</h3>
+        <table>
+            <thead>
+                <th>Action</th>
+                <th>Feature</th>
+                <th>Can Perform Action</th>
+            </thead>
+            <tbody>
+                {% for action in actions%}
+                    {% if action.feature != feature_namespace.feature  %}
+                        {% set feature_namespace.feature = action.feature %}
+                    <tr>
+                        <td colspan="3"><strong>{{feature_namespace.feature}}</strong></td>
+                    </tr>
+                    {%endif%}
+                    <tr>
+                        <td>{{action.action}}</td>
+                        <td>{{action.feature}}</td>
+                        <td>{% if role_has_action(role, action.action) %}YES{% else %}NO{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% endblock %}

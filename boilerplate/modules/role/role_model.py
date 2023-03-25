@@ -43,6 +43,11 @@ class Role(db.Model):
         self.description = description
         self.actions = actions
 
+    def has_action(self, action: str):
+        if action in self.actions:
+            return True
+        return False
+
 # updates system level roles to reflect all possible actions
 def update_system_roles():
     try:
@@ -63,6 +68,8 @@ def create_if_not_exists(role: Role):
             db.session.rollback()
             # Thar be threading afoot. Ignoring integrity errors here, other threads already having created the user.
             return
+
+
 
 # Will seed the Roles table in the db with some default roles.
 def seed_roles_if_required():
