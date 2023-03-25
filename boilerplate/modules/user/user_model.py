@@ -1,4 +1,6 @@
 from boilerplate.db import db
+from boilerplate.modules.role.role_model import Role, get_role_by_name
+from boilerplate.modules.role import action_exists
 from boilerplate.utils.email import send_password_reset_email
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -35,13 +37,16 @@ class User(db.Model):
     creation_time = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     reset_code = db.Column(db.String(32), default="NORESET", nullable=False, unique=False)
     reset_time = db.Column(db.DateTime, default=datetime.fromtimestamp(0), nullable=False)
+    role_uuid = db.Column(db.String(32), db.ForeignKey('role.uuid'), nullable=False)
+    role = db.relationship("Role")
 
-    def __init__(self, email: str, first_name: str, last_name: str, password: str):
+    def __init__(self, email: str, first_name: str, last_name: str, password: str, role: Role):
         self.active = True
         self.email = email
         self.first_name = first_name
         self.last_name = last_name
         self.password = hash_password(password)
+        self.role = role
 
     def is_authenticated(self):
         return self.active
@@ -88,6 +93,12 @@ class User(db.Model):
         except IntegrityError:
             db.session.rollback()
 
+    def can(self, action_name: str):
+        # action_exists confirms the action is registered. If not it will toss an exception.
+        action_exists(action_name)
+        if action_name in self.role.actions:
+            return True
+        return False
 
 def get_by_uuid(user_uuid: str):
     return User.query.filter_by(uuid=user_uuid).first()
@@ -144,9 +155,10 @@ def send_password_reset(email: str):
 # Generates a default user granting access to the app should there be no users in the database
 def seed_user_if_required():
     all_users = db.session.query(User).all()
+    admin_role = get_role_by_name("System Admin")
     if len(all_users) == 0:
         try:
-            db.session.add(User("default@default.com", "default", "user", "iloveflask!"))
+            db.session.add(User("default@default.com", "default", "user", "iloveflask!", admin_role))
             db.session.commit()
         except IntegrityError:
             db.session.rollback()

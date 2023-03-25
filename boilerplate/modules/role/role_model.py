@@ -69,7 +69,8 @@ def create_if_not_exists(role: Role):
             # Thar be threading afoot. Ignoring integrity errors here, other threads already having created the user.
             return
 
-
+def get_role_by_name(role_name: str):
+    return db.session.query(Role).filter_by(name=role_name).first()
 
 # Will seed the Roles table in the db with some default roles.
 def seed_roles_if_required():

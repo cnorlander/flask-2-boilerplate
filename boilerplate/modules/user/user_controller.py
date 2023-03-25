@@ -100,6 +100,7 @@ def post_send_password_reset():
     return redirect(url_for("get_login_page"))
 
 
+
 register_action("read_users_list", "users", "Allows a user to see the list of users in a system.")
 register_action("create_or_edit_user", "users", "Allows a user create or edit a user.", ("read_users_list",))
 register_action("disable_user", "users", "Allows a user to disable a user.", ("read_users_list",))
