@@ -11,7 +11,7 @@
       Here are a list of users in the system.
     </p>
     {% if current_user.can("create_or_edit_role") %}
-    <h2>New Role Button Here</h2>
+        <h2>New Role Button Here</h2>
     {% endif %}
     {% for role in roles %}
         {% set feature_namespace = namespace(feature="") %}

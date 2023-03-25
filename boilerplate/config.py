@@ -4,6 +4,8 @@ DEBUG_MODE = True
 DB_CONNECTION_STRING = 'sqlite:////deploy/database.db'
 BASE_URL = "https://localhost"
 
+# Session Duration (Minutes)
+SESSION_TIMEOUT = 1440
 
 # Password Rules
 PASSWORD_MIN_CHARACTERS = 12

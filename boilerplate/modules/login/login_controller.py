@@ -1,10 +1,11 @@
 from boilerplate.app import app
-from flask import Flask, render_template, redirect, request, flash, abort, url_for
-from flask_login import LoginManager, login_user, logout_user
+from flask import Flask, render_template, redirect, request, flash, abort, url_for, session
+from flask_login import LoginManager, login_user, logout_user, current_user
 from boilerplate.modules.user.user_model import User, get_by_uuid, send_password_reset
 from boilerplate.utils.urls import is_safe_url
-from boilerplate.db import db
+from datetime import timedelta
 from flask import render_template
+import boilerplate.config as config
 
 # Setup Login Manager
 login_manager = LoginManager()
@@ -15,10 +16,22 @@ login_manager.login_message = ""
 @login_manager.user_loader
 def load_user(user_id: str):
     current_user = get_by_uuid(user_id)
-    if (current_user is None) or (not current_user.active):
-        flash("Your account with this service is no longer active. If you believe this to be in error please contact an admin and have your account reactivated", "error")
-        #return abort(403)
     return get_by_uuid(user_id)
+
+# Sets session max length on every request
+@app.before_request
+def session_timeout():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=config.SESSION_TIMEOUT)
+
+@app.before_request
+def check_for_expired_accounts():
+    if (not current_user.is_anonymous) and (not current_user.active):
+        flash(
+            "Your account with this service is no longer active. If you believe this to be in error please contact an admin and have your account reactivated.",
+            "error")
+        logout_user()
+        return redirect(url_for("get_login_page"))
 
 @app.get("/login")
 def get_login_page():
@@ -38,7 +51,6 @@ def post_login_user():
 
     # Get the user form the database.
     db_user = User.query.filter_by(email=input_email).first()
-    print(db_user, flush=True)
     # If the user is not in the database toss flash a login error and return them to the login screen.
     if not db_user:
         flash("The credentials you supplied are incorrect. Please check your username and password and try again.", "error")
