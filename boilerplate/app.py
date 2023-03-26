@@ -17,6 +17,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 with app.app_context():
     import boilerplate.errors
+    import boilerplate.utils.filters
     import boilerplate.modules.user.user_controller
     import boilerplate.modules.login.login_controller
     import boilerplate.modules.role.role_controller

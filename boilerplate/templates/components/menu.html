@@ -2,7 +2,8 @@
     <h1>Flask</h1>
     <h2>Welcome {{current_user.first_name}}!</h2>
   <ul>
-    <a href="/users">User List</a>
-    <a href="/logout">Logout</a>
+        {% if current_user.can("read_users_list") %}<a href="/users">Users</a>{% endif %}
+        {% if current_user.can("read_roles_list") %}<a href="/roles">Roles</a>{% endif %}
+        <a href="/logout">Logout</a>
   </ul>
 </nav>
