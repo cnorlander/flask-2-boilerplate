@@ -10,8 +10,9 @@ def context_processor_role_has_action():
         return role.has_action(action)
     return dict(role_has_action=role_has_action)
 
-@login_required
+
 @app.get('/roles')
+@login_required
 def get_roles_list():
     roles = Role.query.all()
     actions = get_actions()

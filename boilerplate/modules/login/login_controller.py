@@ -26,7 +26,7 @@ def session_timeout():
 
 @app.before_request
 def check_for_expired_accounts():
-    if (not current_user.is_anonymous) and (not current_user.active):
+    if (not current_user.is_anonymous) and (not current_user.is_active):
         flash(
             "Your account with this service is no longer active. If you believe this to be in error please contact an admin and have your account reactivated.",
             "error")

@@ -39,7 +39,6 @@ class User(db.Model):
     reset_time = db.Column(db.DateTime, default=datetime.fromtimestamp(0), nullable=False)
     role_uuid = db.Column(db.String(32), db.ForeignKey('role.uuid'), nullable=False)
     role = db.relationship("Role")
-    is_anonymous = False
 
     def __init__(self, email: str, first_name: str, last_name: str, password: str, role: Role):
         self.active = True
@@ -49,11 +48,17 @@ class User(db.Model):
         self.password = hash_password(password)
         self.role = role
 
-    def is_authenticated(self):
-        return self.active
-
+    @property
     def is_active(self):
         return self.active
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
 
     def get_id(self):
         return self.uuid
