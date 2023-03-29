@@ -1,7 +1,7 @@
 from boilerplate.app import app
 from flask import Flask, render_template, redirect, request, flash, abort, url_for, session
-from flask_login import LoginManager, login_user, logout_user, current_user
-from boilerplate.modules.user.user_model import User, get_by_uuid, send_password_reset
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+from boilerplate.modules.user.user_model import User, AnonymousUser, get_by_uuid, send_password_reset
 from boilerplate.utils.urls import is_safe_url
 from datetime import timedelta
 from flask import render_template
@@ -12,6 +12,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'get_login_page'
 login_manager.login_message = ""
+login_manager.anonymous_user = AnonymousUser
 
 @login_manager.user_loader
 def load_user(user_id: str):

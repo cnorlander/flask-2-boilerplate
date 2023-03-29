@@ -76,4 +76,3 @@ def get_role_by_name(role_name: str):
 def seed_roles_if_required():
     create_if_not_exists(Role("System", "Global Role for the System it's self.", [], system=True, hidden=True))
     create_if_not_exists(Role("System Admin", "Global Role for a System Admin.", [], system=True, hidden=False))
-    create_if_not_exists(Role("Test Role", "Global Role for a System Admin.", [get_action_names()[1]]))

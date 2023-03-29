@@ -1,8 +1,9 @@
-from flask import Flask, redirect, url_for
 import time, asyncio, os
 import boilerplate.config as config
+from flask import Flask, redirect, url_for, abort
 from boilerplate.app import app
-from flask_login import login_required
+from flask_login import login_required, current_user
+from boilerplate.utils.urls import route_info
 
 
 __author__ = "Corey Norlander"
@@ -19,3 +20,10 @@ time.tzset()
 @app.route('/')
 def index():
     return redirect(url_for("get_user_list"))
+
+@app.get('/api/v1/routes')
+@login_required
+def get_all_routes():
+    if current_user.role.system:
+        return route_info()
+    return abort(403)

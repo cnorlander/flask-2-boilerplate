@@ -37,18 +37,52 @@
     </form>
     {% endif %}
     <hr>
-    <div class="accordion" id="accordionExample">
     {% for role in roles %}
+    {% if (not role.hidden and role.active) or (current_user.role.system) %}
+    <div class="accordion" id="accordionExample">
         {% set feature_namespace = namespace(feature="") %}
+
         <div class="accordion-item">
             <h2 class="accordion-header" id="heading{{loop.index}}">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{loop.index}}" aria-expanded="true"
                         aria-controls="collapse{{loop.index}}">
-                    <h3>{{role.name}}</h3>
+                    <h3>{% if (not role.active) %}DEACTIVATED - {%endif%}{{role.name}}</h3>
                 </button>
             </h2>
             <div id="collapse{{loop.index}}" class="accordion-collapse collapse" aria-labelledby="heading{{loop.index}}">
                 <div class="accordion-body">
+                    <p>{{role.description}}</p>
+                    {% if current_user.role.system %}
+                        <table style="width: auto"class="table table-sm table-striped">
+                        <tbody>
+                            <tr>
+                                <td class="table-dark fw-bold">ID</td>
+                                <td>{{ role.id }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-dark fw-bold">UUID</td>
+                                <td>{{ role.uuid }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-dark fw-bold">Created</td>
+                                <td>{{ role.creation_time }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-dark fw-bold">Active</td>
+                                {% if role.active %}<td class="table-success"><i class="text-success fa fa-solid fa-check"></i></td>{% else %}<td class="table-danger"><i class="text-danger fa-solid fa-xmark"></i></td>{% endif %}
+                            </tr>
+                            <tr>
+                                <td class="table-dark fw-bold">Hidden</td>
+                                {% if role.hidden %}<td class="table-success"><i class="text-success fa fa-solid fa-check"></i></td>{% else %}<td class="table-danger"><i class="text-danger fa-solid fa-xmark"></i></td>{% endif %}
+                            </tr>
+                            <tr>
+                                <td class="table-dark fw-bold">System</td>
+                                {% if role.system %}<td class="table-success"><i class="text-success fa fa-solid fa-check"></i></td>{% else %}<td class="table-danger"><i class="text-danger fa-solid fa-xmark"></i></td>{% endif %}
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% endif %}
+
                     <table class="table table-sm table-striped">
                         <thead class="table-dark">
                             <th>Action</th>
@@ -72,9 +106,9 @@
                 </div>
             </div>
         </div>
-
-
+    </div>
+    {% endif %}
 
     {% endfor %}
-    </div>
+
 {% endblock %}

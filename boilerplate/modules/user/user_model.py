@@ -103,6 +103,29 @@ class User(db.Model):
             return True
         return False
 
+class AnonymousUser():
+    @property
+    def role(self):
+        return get_role_by_name("Anonymous")
+
+    @property
+    def is_active(self):
+        return False
+
+    @property
+    def is_authenticated(self):
+        return False
+
+    @property
+    def is_anonymous(self):
+        return True
+
+    def get_id(self):
+        return None
+
+    def can(self, *args):
+        return False
+
 def get_by_uuid(user_uuid: str):
     return User.query.filter_by(uuid=user_uuid).first()
 
