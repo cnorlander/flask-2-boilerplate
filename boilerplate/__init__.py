@@ -25,5 +25,6 @@ def index():
 @login_required
 def get_all_routes():
     if current_user.role.system:
-        return route_info()
+        sorted_routes = sorted(route_info(), key=lambda route: route['module'])
+        return sorted_routes
     return abort(403)

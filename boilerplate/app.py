@@ -16,18 +16,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 with app.app_context():
+    # Import all app modules
     import boilerplate.errors
     import boilerplate.utils.filters
-    import boilerplate.modules.user.user_controller
-    import boilerplate.modules.login.login_controller
-    import boilerplate.modules.role.role_controller
-    import boilerplate.modules.user.user_model
-    import boilerplate.modules.role.role_model
+    import boilerplate.modules.role
+    import boilerplate.modules.user
+    import boilerplate.modules.login
 
+    # Create any db models
     db.create_all()
     db.session.commit()
 
-
+    # Run the database initialization tasks if needed
     boilerplate.modules.role.role_model.seed_roles_if_required()
     boilerplate.modules.role.role_model.update_system_roles()
    # boilerplate.modules.role.role_model.action_clean_up()

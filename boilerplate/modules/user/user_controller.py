@@ -1,6 +1,6 @@
 from boilerplate.app import app
 import boilerplate.config as config
-from boilerplate.modules.role import register_action
+from boilerplate.modules.role.role_actions import register_action
 from flask import render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required
 from boilerplate.modules.user.user_model import User, send_password_reset, get_by_uuid, check_password_requirements

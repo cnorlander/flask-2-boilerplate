@@ -1,5 +1,5 @@
 from boilerplate.db import db
-from boilerplate.modules.role import get_action_names
+from boilerplate.modules.role.role_actions import get_action_names
 from sqlalchemy.sql import func
 from sqlalchemy.exc import IntegrityError
 from typing import List

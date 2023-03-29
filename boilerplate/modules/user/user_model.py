@@ -1,6 +1,6 @@
 from boilerplate.db import db
 from boilerplate.modules.role.role_model import Role, get_role_by_name
-from boilerplate.modules.role import action_exists
+from boilerplate.modules.role.role_actions import action_exists
 from boilerplate.utils.email import send_password_reset_email
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
