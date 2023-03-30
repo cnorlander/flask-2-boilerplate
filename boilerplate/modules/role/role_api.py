@@ -4,6 +4,10 @@ from boilerplate.modules.role.role_actions import get_actions, register_action
 from flask_login import current_user, login_required
 from flask import abort
 
+
+# ==============================================================================================================================================================
+#                                                                   Endpoint Routes
+# ==============================================================================================================================================================
 @app.get('/api/v1/roles')
 @login_required
 def get_all_roles():

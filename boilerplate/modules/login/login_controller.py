@@ -7,12 +7,20 @@ from datetime import timedelta
 from flask import render_template
 import boilerplate.config as config
 
-# Setup Login Manager
+# ==============================================================================================================================================================
+#                                                                      Configuration
+# ==============================================================================================================================================================
+
+# Setup & Configure The Login Manager
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'get_login_page'
 login_manager.login_message = ""
 login_manager.anonymous_user = AnonymousUser
+
+# ==============================================================================================================================================================
+#                                                                      Utility Functions
+# ==============================================================================================================================================================
 
 @login_manager.user_loader
 def load_user(user_id: str):
@@ -25,6 +33,7 @@ def session_timeout():
     session.permanent = True
     app.permanent_session_lifetime = timedelta(minutes=config.SESSION_TIMEOUT)
 
+# Checks on every request if a users account is still active
 @app.before_request
 def check_for_expired_accounts():
     if (not current_user.is_anonymous) and (not current_user.is_active):
@@ -33,6 +42,10 @@ def check_for_expired_accounts():
             "error")
         logout_user()
         return redirect(url_for("get_login_page"))
+
+# ==============================================================================================================================================================
+#                                                                      View Routes
+# ==============================================================================================================================================================
 
 @app.get("/login")
 def get_login_page():
@@ -64,7 +77,8 @@ def post_login_user():
 
     # Ensure the users account is still active. If not toss a deactivated.
     if not db_user.active:
-        flash(f"The account with email address \"{db_user.email}\" is deactivated and cannot login. If you believe this is in error please contact an admin.", "error")
+        flash(f"The account with email address \"{db_user.email}\" is deactivated and cannot login. If you believe this is in error please contact an admin.",
+              "error")
         return redirect(url_for("get_login_page"))
 
     # Log the user in!

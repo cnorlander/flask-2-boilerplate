@@ -8,6 +8,10 @@ import json
 from datetime import datetime
 from dataclasses import dataclass
 
+# ==============================================================================================================================================================
+#                                                      Role Model Class & Class Methods Definition
+# ==============================================================================================================================================================
+
 # Using Python Dataclasses. Haven't seen this with many Flask examples but it works well for automatic JSON conversion:
 # https://docs.python.org/3/library/dataclasses.html
 @dataclass
@@ -47,6 +51,10 @@ class Role(db.Model):
         if action in self.actions:
             return True
         return False
+
+# ==============================================================================================================================================================
+#                                                            Non-Class Utility Functions
+# ==============================================================================================================================================================
 
 # updates system level roles to reflect all possible actions
 def update_system_roles():

@@ -13,7 +13,9 @@ import uuid
 from dataclasses import dataclass
 
 
-
+# ==============================================================================================================================================================
+#                                                      User Model Class & Class Methods Definition
+# ==============================================================================================================================================================
 # Using Python Dataclasses. Haven't seen this with many Flask examples but it works well for automatic JSON conversion:
 # https://docs.python.org/3/library/dataclasses.html
 @dataclass
@@ -103,6 +105,9 @@ class User(db.Model):
             return True
         return False
 
+# ==============================================================================================================================================================
+#                                                      Anonymous User Class & Methods Definition
+# ==============================================================================================================================================================
 class AnonymousUser():
     @property
     def role(self):
@@ -126,6 +131,9 @@ class AnonymousUser():
     def can(self, *args):
         return False
 
+# ==============================================================================================================================================================
+#                                                             Non-Class Utility Functions
+# ==============================================================================================================================================================
 def get_by_uuid(user_uuid: str):
     return User.query.filter_by(uuid=user_uuid).first()
 

@@ -3,7 +3,9 @@ from boilerplate.db import db
 from flask import Flask
 from sqlalchemy.exc import OperationalError
 
-
+# ==============================================================================================================================================================
+#                                                                      Configuration
+# ==============================================================================================================================================================
 # Setup Flask app object
 app = Flask(__name__)
 app.secret_key = config.APP_SECRET
@@ -13,7 +15,9 @@ app.debug = config.DEBUG_MODE
 app.config['SQLALCHEMY_DATABASE_URI'] = config.DB_CONNECTION_STRING
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-
+# ==============================================================================================================================================================
+#                                                                   App Initialization
+# ==============================================================================================================================================================
 db.init_app(app)
 with app.app_context():
     # Import all app modules
@@ -27,7 +31,7 @@ with app.app_context():
     db.create_all()
     db.session.commit()
 
-    # Run the database initialization tasks if needed
+    # Run the database initialization seeding tasks if needed
     boilerplate.modules.role.role_model.seed_roles_if_required()
     boilerplate.modules.role.role_model.update_system_roles()
    # boilerplate.modules.role.role_model.action_clean_up()

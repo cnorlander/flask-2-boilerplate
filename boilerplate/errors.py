@@ -3,6 +3,9 @@ from flask import render_template, abort
 import base64
 import uuid
 
+# ==============================================================================================================================================================
+#                                                                   Error Views
+# ==============================================================================================================================================================
 #TODO: Add logging to all these errors
 @app.errorhandler(400)
 def bad_request(error):
@@ -44,6 +47,9 @@ def internal_server_error(error):
         message = error.description
     return render_template('error.html', http_status_code=http_status_code, error=str(error), message=message, error_id=error_id), http_status_code
 
+# ==============================================================================================================================================================
+#                                                                Error Views Test Routes
+# ==============================================================================================================================================================
 @app.get("/errors/400")
 def error_test_400():
     return abort(400)

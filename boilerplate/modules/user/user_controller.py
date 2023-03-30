@@ -5,17 +5,18 @@ from flask import render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required
 from boilerplate.modules.user.user_model import User, send_password_reset, get_by_uuid, check_password_requirements
 from boilerplate.utils.email import validate_address
-
 from sqlalchemy.sql import func
 
-# Page shows all users in the system
+# ==============================================================================================================================================================
+#                                                                      View Routes
+# ==============================================================================================================================================================
 
+# Page shows all users in the system
 @app.get('/users')
 @login_required
 def get_user_list():
     all_users = User.query.all()
     return render_template("user/user_list.html", all_users=all_users)
-
 
 @app.get('/password-reset')
 def get_password_reset_screen():
@@ -99,8 +100,9 @@ def post_send_password_reset():
     flash("Could not reset password. Please contact support to resolve this issue.", "error")
     return redirect(url_for("get_login_page"))
 
-
-
+# ==============================================================================================================================================================
+#                                                                 Action Registrations
+# ==============================================================================================================================================================
 register_action("read_users_list", "users", "Allows a user to see the list of users in a system.")
 register_action("create_or_edit_user", "users", "Allows a user create or edit a user.", ("read_users_list",))
 register_action("disable_user", "users", "Allows a user to disable a user.", ("read_users_list",))
