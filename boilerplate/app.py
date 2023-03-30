@@ -23,7 +23,7 @@ with app.app_context():
     # Import all app modules
     import boilerplate.errors
     import boilerplate.utils.filters
-    import boilerplate.modules.role
+    import boilerplate.modules.role as role
     import boilerplate.modules.user
     import boilerplate.modules.login
 
@@ -32,8 +32,8 @@ with app.app_context():
     db.session.commit()
 
     # Run the database initialization seeding tasks if needed
-    boilerplate.modules.role.role_model.seed_roles_if_required()
-    boilerplate.modules.role.role_model.update_system_roles()
-   # boilerplate.modules.role.role_model.action_clean_up()
-    boilerplate.modules.user.user_model.seed_user_if_required()
+    #role.role_model.seed_roles_if_required()
+    role.role_model.update_system_roles()
+    #role.role_model.action_clean_up()
+    #user.user_model.seed_user_if_required()
 

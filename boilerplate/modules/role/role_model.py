@@ -59,7 +59,8 @@ class Role(db.Model):
 # updates system level roles to reflect all possible actions
 def update_system_roles():
     try:
-        rows_changed = Role.query.filter_by(system=True).update({'actions':get_action_names()})
+        actions = get_action_names()
+        rows_changed = Role.query.filter_by(system=True).update({'actions':actions})
         db.session.commit()
     except:
         db.session.rollback()

@@ -1,9 +1,10 @@
 import time, asyncio, os
 import boilerplate.config as config
-from flask import Flask, redirect, url_for, abort
 from boilerplate.app import app
+from flask import Flask, redirect, url_for, abort
 from flask_login import login_required, current_user
 from boilerplate.utils.urls import route_info
+from boilerplate.modules.role.role_decorators import require_system_role
 
 
 # ==============================================================================================================================================================
@@ -31,8 +32,7 @@ def index():
 # ==============================================================================================================================================================
 @app.get('/api/v1/routes')
 @login_required
+@require_system_role
 def get_all_routes():
-    if current_user.role.system:
-        sorted_routes = sorted(route_info(), key=lambda route: route['module'])
-        return sorted_routes
-    return abort(403)
+    return sorted(route_info(), key=lambda route: route['module'])
+

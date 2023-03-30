@@ -3,6 +3,7 @@ import boilerplate.config as config
 from boilerplate.modules.role.role_actions import register_action
 from flask import render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required
+from boilerplate.modules.role.role_decorators import require_action
 from boilerplate.modules.user.user_model import User, send_password_reset, get_by_uuid, check_password_requirements
 from boilerplate.utils.email import validate_address
 from sqlalchemy.sql import func
@@ -14,6 +15,7 @@ from sqlalchemy.sql import func
 # Page shows all users in the system
 @app.get('/users')
 @login_required
+@require_action("read_users_list")
 def get_user_list():
     all_users = User.query.all()
     return render_template("user/user_list.html", all_users=all_users)

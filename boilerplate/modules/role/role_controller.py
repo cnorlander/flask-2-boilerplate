@@ -1,6 +1,7 @@
 from boilerplate.app import app
 from boilerplate.modules.role.role_model import Role
-from boilerplate.modules.role.role_actions import get_actions, register_action
+from boilerplate.modules.role.role_actions import get_actions, get_action_names, register_action
+from boilerplate.modules.role.role_decorators import require_action
 from flask import render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required
 
@@ -12,7 +13,6 @@ from flask_login import login_required
 def get_roles_list():
     roles = Role.query.all()
     actions = get_actions()
-    print(actions, flush=True)
     return render_template("role/role_list.html", actions=actions, roles=roles)
 
 # ==============================================================================================================================================================
