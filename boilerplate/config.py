@@ -1,8 +1,19 @@
 TIMEZONE = 'America/Vancouver'
 APP_SECRET = 'YOUR_SECRET_KEY'
-DEBUG_MODE = True
+DEBUG_MODE = False
 DB_CONNECTION_STRING = 'sqlite:////deploy/database.db'
 BASE_URL = "https://localhost"
+
+#Logging
+# Note: DEBUG_MODE overrides logging level forcing level of DEBUG
+LOGGING_LEVEL = "DEBUG"
+LOGGING_MAX_SIZE_KB = 1000
+LOGGING_MAX_LOGS = 3
+LOGGING_FILE = './boilerplate/logs/main.log'
+LOGGING_LOG_400_ERRORS = True
+LOGGING_LOG_403_ERRORS = True
+LOGGING_LOG_404_ERRORS = True
+LOGGING_LOG_500_ERRORS = True
 
 # Session Duration (Minutes)
 SESSION_TIMEOUT = 1440

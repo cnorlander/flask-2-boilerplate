@@ -17,7 +17,7 @@ services:
             - "80:80"
             - "443:443"
         volumes:
-            - ./boilerplate/static:/var/www
+            - ./boilerplate/static:/var/www/static
             - ./nginx/ssl:/etc/nginx/ssl
             - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
         depends_on:
