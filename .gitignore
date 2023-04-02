@@ -6,4 +6,5 @@ nginx/ssl/*.csr
 /venv/
 /.idea/
 /database.db
-/logs/*
+/logs/*.log
+/logs/*.log.*
