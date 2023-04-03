@@ -43,7 +43,7 @@ def debug(message: str, traceback=None, silence_cli=False):
     if traceback:
         log_out += f'\r\n{traceback}'
     logger.debug(log_out)
-    if not silence_cli and config.DEBUG_MODE or config.LOGGING_LEVEL is "DEBUG":
+    if not silence_cli and config.DEBUG_MODE or config.LOGGING_LEVEL == "DEBUG":
         print(message, flush=True)
 
 
