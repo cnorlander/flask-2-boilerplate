@@ -1,9 +1,2 @@
-<nav>
-    <h1>Flask</h1>
-    <h2>Welcome {{current_user.first_name}}!</h2>
-  <ul>
-        {% if current_user.can("read_users_list") %}<a href="/users">Users</a>{% endif %}
-        {% if current_user.can("read_roles_list") %}<a href="/roles">Roles</a>{% endif %}
-        <a href="/logout">Logout</a>
-  </ul>
-</nav>
+{% if current_user.can("read_users_list") %}<a href="/users"><i class="fa-solid fa-users fa-fw me-2"></i>Users Console</a>{% endif %}
+{% if current_user.can("read_roles_list") %}<a href="/roles"><i class="fa-solid fa-user-shield fa-fw me-2"></i>Roles Console</a>{% endif %}

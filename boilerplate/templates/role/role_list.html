@@ -1,12 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Users{% endblock %}
+{% block title %}Roles{% endblock %}
 {% block head %}
     <style type="text/css">
         .important { color: #336699; }
     </style>
 {% endblock %}
 {% block content %}
-    <h1>Roles</h1>
     {% if current_user.can("create_or_edit_role") %}
     <h2>Create New role</h2>
     <form>
@@ -53,56 +52,59 @@
                 <div class="accordion-body">
                     <p>{{role.description}}</p>
                     {% if current_user.role.system %}
-                        <table style="width: auto"class="table table-sm table-striped">
-                        <tbody>
-                            <tr>
-                                <td class="table-dark fw-bold">ID</td>
-                                <td>{{ role.id }}</td>
-                            </tr>
-                            <tr>
-                                <td class="table-dark fw-bold">UUID</td>
-                                <td>{{ role.uuid }}</td>
-                            </tr>
-                            <tr>
-                                <td class="table-dark fw-bold">Created</td>
-                                <td>{{ role.creation_time }}</td>
-                            </tr>
-                            <tr>
-                                <td class="table-dark fw-bold">Active</td>
-                                {% if role.active %}<td class="table-success"><i class="text-success fa fa-solid fa-check"></i></td>{% else %}<td class="table-danger"><i class="text-danger fa-solid fa-xmark"></i></td>{% endif %}
-                            </tr>
-                            <tr>
-                                <td class="table-dark fw-bold">Hidden</td>
-                                {% if role.hidden %}<td class="table-success"><i class="text-success fa fa-solid fa-check"></i></td>{% else %}<td class="table-danger"><i class="text-danger fa-solid fa-xmark"></i></td>{% endif %}
-                            </tr>
-                            <tr>
-                                <td class="table-dark fw-bold">System</td>
-                                {% if role.system %}<td class="table-success"><i class="text-success fa fa-solid fa-check"></i></td>{% else %}<td class="table-danger"><i class="text-danger fa-solid fa-xmark"></i></td>{% endif %}
-                            </tr>
-                        </tbody>
-                    </table>
+                        <div class="table-responsive">
+                            <table style="width: auto"class="table table-sm table-striped">
+                                <tbody>
+                                    <tr>
+                                        <td class="table-dark fw-bold">ID</td>
+                                        <td>{{ role.id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="table-dark fw-bold ow-anywhere">UUID</td>
+                                        <td class="ow-anywhere">{{ role.uuid }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="table-dark fw-bold">Created</td>
+                                        <td>{{ role.creation_time }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="table-dark fw-bold">Active</td>
+                                        {% if role.active %}<td class="table-success"><i class="text-success fa fa-solid fa-check"></i></td>{% else %}<td class="table-danger"><i class="text-danger fa-solid fa-xmark"></i></td>{% endif %}
+                                    </tr>
+                                    <tr>
+                                        <td class="table-dark fw-bold">Hidden</td>
+                                        {% if role.hidden %}<td class="table-success"><i class="text-success fa fa-solid fa-check"></i></td>{% else %}<td class="table-danger"><i class="text-danger fa-solid fa-xmark"></i></td>{% endif %}
+                                    </tr>
+                                    <tr>
+                                        <td class="table-dark fw-bold">System</td>
+                                        {% if role.system %}<td class="table-success"><i class="text-success fa fa-solid fa-check"></i></td>{% else %}<td class="table-danger"><i class="text-danger fa-solid fa-xmark"></i></td>{% endif %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     {% endif %}
-
-                    <table class="table table-sm table-striped">
-                        <thead class="table-dark">
-                            <th>Action</th>
-                            <th class="text-center">Can Perform Action</th>
-                        </thead>
-                        <tbody>
-                            {% for action in actions%}
-                                {% if action.feature != feature_namespace.feature  %}
-                                    {% set feature_namespace.feature = action.feature %}
-                                <tr class="table-light">
-                                    <td colspan="3"><strong>{{feature_namespace.feature | title }}</strong></td>
-                                </tr>
-                                {%endif%}
-                                <tr>
-                                    <td>{{action.action | deunderscore_title}}</td>
-                                    <td class="text-center">{% if role_has_action(role, action.action) %}<i class="text-success fa fa-solid fa-check"></i>{% else %}<i class="text-danger fa-solid fa-xmark"></i>{% endif %}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead class="table-dark">
+                                <th>Action</th>
+                                <th class="text-center">Can Perform Action</th>
+                            </thead>
+                            <tbody>
+                                {% for action in actions%}
+                                    {% if action.feature != feature_namespace.feature  %}
+                                        {% set feature_namespace.feature = action.feature %}
+                                    <tr class="table-light">
+                                        <td colspan="3"><strong>{{feature_namespace.feature | title }}</strong></td>
+                                    </tr>
+                                    {%endif%}
+                                    <tr>
+                                        <td>{{action.action | deunderscore_title}}</td>
+                                        <td class="text-center">{% if role_has_action(role, action.action) %}<i class="text-success fa fa-solid fa-check"></i>{% else %}<i class="text-danger fa-solid fa-xmark"></i>{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

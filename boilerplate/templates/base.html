@@ -1,26 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}{% endblock %}</title>
-        {% include "components/global_head.html" %}
-        {% block local_head %}{% endblock %}
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    {% include "components/global_head.html" %}
+    {% block local_head %}{% endblock %}
+</head>
+<body>
+<div class="wrapper">
+    <aside id="sidenav-open">
+        <nav>
+            <div class="brand-block">
+                <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Flask_logo.svg/1280px-Flask_logo.svg.png">
+                <a href="#" title="Close Menu" aria-label="Close Menu" id="sidenav-close">
+                    <i class="fa-solid fa-xmark"></i>
+                </a>
+            </div>
+            <div class="menu-block">
+                {% include "components/menu.html" %}
+            </div>
+            <div class="account-block">
+                <svg class="profile-picture" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                     viewBox="0 0 500 500">
+                    <g>
+                        <circle id="circle" cx="250" cy="250" r="230"></circle>
+                        <text id="letter" x="51%" y="53%" text-anchor="middle" dy=".3em">{{ current_user.get_initials() }}</text>
+                    </g>
+                </svg>
+                <div class="vert-float-wrapper">
+                    <div class="vert-float">
+                        <span style="font-weight: 600;">{{ current_user.first_name.title() }} {{ current_user.last_name.title() }}</span><br>
+                        <a class="btn btn-secondary btn-sm"href="/logout">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </aside>
+    <main>
         <header>
-            {% include "components/menu.html" %}
+            <h1>{{ self.title() }}</h1>
+            <a href="#sidenav-open" class="hamburger" title="Open Menu" aria-label="Open Menu" id="sidenav-burger">
+                <i class="fa-solid fa-bars"></i>
+            </a>
         </header>
-        <section>
-            {% for message in get_flashed_messages() %}
-            <div class="flash">{{ message }}</div>
-            {% endfor %}
-        </section>
-        <section>
-            {% block content %}{% endblock %}
-        </section>
-        <footer>
-            Flask Project Footer
-        </footer>
-    </body>
+        <div class="scroll-pane">
+            <section>
+                <article>
+                    {% for message in get_flashed_messages() %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {% block content %}{% endblock %}
+                </article>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
 {% block local_foot %}{% endblock %}
 </html>

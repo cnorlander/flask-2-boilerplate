@@ -82,6 +82,9 @@ class User(db.Model):
             return True
         return False
 
+    def get_initials(self):
+        return (self.first_name[0] + self.last_name[0]).upper()
+
     def update_password(self, new_password: str):
         self.password = hash_password(new_password)
         self.reset_code = "NORESET"
