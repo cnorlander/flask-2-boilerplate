@@ -1,44 +1,142 @@
 {% extends "base.html" %}
 {% block title %}Roles{% endblock %}
-{% block head %}
-    <style type="text/css">
-        .important { color: #336699; }
-    </style>
+{% block local_head %}
+    <script src="/static/js/permissions.js"></script>
 {% endblock %}
 {% block content %}
     {% if current_user.can("create_or_edit_role") %}
-    <h2>Create New role</h2>
-    <form>
-        <input type="hidden" name="id" value="new">
-         <table class="table table-sm">
-            <thead class="table-dark">
-                <tr>
-                    <th>Action</th>
-                    <th class="text-center" >Can Perform Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% set feature_namespace = namespace(feature="") %}
-                {% for action in actions%}
-                    {% if action.feature != feature_namespace.feature  %}
-                        {% set feature_namespace.feature = action.feature %}
-                    <tr class="table-light">
-                        <td colspan="3"><strong>{{feature_namespace.feature | title }}</strong></td>
-                    </tr>
-                    {%endif%}
-                    <tr>
-                        <td>{{action.action}}</td>
-                        <td class="text-center" ><input type="checkbox" name="role-actions[]" value="{{action.action}}"></td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- ================================================================================================================================= -->
+    <!--                                                      Create Roles Modal                                                           -->
+    <!-- ================================================================================================================================= -->
+    <form action="{{url_for('post_create_or_edit_role')}}" method="POST" id="permissions-form">
+    <div class="modal fade" tabindex="-1" id="create-edit-role-modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="create-edit-role-modal-header">Create New Role</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+                <input type="hidden" id="role-id" name="role-id" value="new">
+                <div class="form-floating mb-2">
+                    <input name="role-name" type="text" class="form-control" id="role-name" required>
+                    <label for="role-name">Role Name</label>
+                </div>
+                <div class="form-floating mb-2">
+                    <input name="role-description" type="text" class="form-control" id="role-description" required>
+                    <label for="role-description">Role Description</label>
+                </div>
+                 <table class="table table-sm dependent-checkboxes">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Action</th>
+                            <th>Required Actions</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% set feature_namespace = namespace(feature="") %}
+                        {% for action in actions%}
+                            {% if action.feature != feature_namespace.feature  %}
+                                {% set feature_namespace.feature = action.feature %}
+                            <tr class="table-light">
+                                <td colspan="3"><strong>{{feature_namespace.feature | title }}</strong></td>
+                            </tr>
+                            {%endif%}
+                            <tr class="permission">
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input form-check-success" type="checkbox" name="action-flag-{{action.action}}" id="{{action.action}}" value="true" {% if action.required_actions | length > 0 %}data-requires="{{ action.required_actions | tuple_to_simple_list }}"{% endif %}>
+                                        <label class="form-check-label" for="{{action.action}}">{{action.action | deunderscore_title}}</label>
+                                    </div>
+                                    <input type="hidden" name="action-flag-{{action.action}}" value="false">
+                                </td>
+                                <td>
+                                    {{ action.required_actions | tuple_to_simple_list | deunderscore_title }}
+                                </td>
+                                <td>
+                                    {{ action.description }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {%if current_user.role.system %}
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input form-check-success" type="checkbox" name="role-hidden" id="role-hidden" value="true">
+                        <label class="form-check-label" for="role-hidden">Hidden Role</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input form-check-success" type="checkbox" name="role-system" id="role-system" value="true">
+                        <label class="form-check-label" for="role-system">System Role</label>
+                    </div>
+                {% endif %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i> Close</button>
+            <button type="button" onclick="submitPermissionsForm()" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Save Role</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+    <button onclick="clearModal()" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#create-edit-role-modal">
+      <i class="fa-solid fa-plus"></i> Create New Role
+    </button>
+    <hr>
+    {% endif %}
+    <!-- ================================================================================================================================= -->
+    <!--                                                      Delete Roles Modal                                                           -->
+    <!-- ================================================================================================================================= -->
+    {% if current_user.can("delete_role") %}
+    <form action="{{url_for('post_create_or_edit_role')}}" method="POST" id="delete-role-form">
+    <div class="modal fade" tabindex="-1" id="delete-role-modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="delete-role-modal-header">Delete Role</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+                <input type="hidden" id="delete-role-id" name="delete-role-id" value="">
+                <p>
+                    In order to delete a role you must select a replacement role. If any users in the system are using the deleted
+                    role will have their role changed to this replacement role.
+                </p>
+                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                  {% for role in roles|reverse %}
+                    {% if ((not role.system) and (not role.hidden) and role.active) or (current_user.role.system) %}
+                        <option value="{{role.id}}">{% if (not role.active) %}DEACTIVATED - {%endif%}{{role.name}}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                <p>
+                    To confirm you are deleting the correct Role please enter the role as it appears above.
+                </p>
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" id="disabled-role-name" value="" disabled>
+                    <label for="role-description">Role Name</label>
+                </div>
+                <div class="form-floating mb-2">
+                    <input name="delete-roll-confirm" type="text" class="form-control" id="delete-roll-confirm" required>
+                    <label for="role-description">Confirm Role Name</label>
+                </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i> Close</button>
+            <button type="button" onclick="submitPermissionsForm()" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Delete Role</button>
+          </div>
+        </div>
+      </div>
+    </div>
     </form>
     {% endif %}
-    <hr>
+    <!-- ================================================================================================================================= -->
+    <!--                                                      Current Roles List                                                           -->
+    <!-- ================================================================================================================================= -->
     {% for role in roles %}
-    {% if (not role.hidden and role.active) or (current_user.role.system) %}
-    <div class="accordion" id="accordionExample">
+    {% if ((not role.system) and (not role.hidden) and role.active) or (current_user.role.system) %}
+    <div class="accordion mb-2">
         {% set feature_namespace = namespace(feature="") %}
 
         <div class="accordion-item">
@@ -87,6 +185,7 @@
                         <table class="table table-sm table-striped">
                             <thead class="table-dark">
                                 <th>Action</th>
+                                {%if current_user.role.system %}<th>Action Internal Name</th>{%endif%}
                                 <th class="text-center">Can Perform Action</th>
                             </thead>
                             <tbody>
@@ -98,13 +197,24 @@
                                     </tr>
                                     {%endif%}
                                     <tr>
-                                        <td>{{action.action | deunderscore_title}}</td>
+                                        <td class="indent">{{action.action | deunderscore_title}}</td>
+                                        {%if current_user.role.system %}<td>{{action.action}}</td>{%endif%}
                                         <td class="text-center">{% if role_has_action(role, action.action) %}<i class="text-success fa fa-solid fa-check"></i>{% else %}<i class="text-danger fa-solid fa-xmark"></i>{% endif %}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
+                    {%if current_user.can("delete_role") %}
+                    <button onclick='deleteRole("{{ role.uuid }}", "{{ role.name }}")' type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-role-modal">
+                      <i class="fa-solid fa-trash-can"></i> Delete Role
+                    </button>
+                    {%endif%}
+                    {%if current_user.can("create_or_edit_role") %}
+                    <button onclick='editRole({{ role | tojson }})' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create-edit-role-modal">
+                      <i class="fa-solid fa-pen-to-square"></i> Edit Role
+                    </button>
+                    {%endif%}
                 </div>
             </div>
         </div>

@@ -1,0 +1,20 @@
+.modal {
+    --bs-modal-width: 1000px;
+}
+
+.form-check-input.form-check-success:checked {
+    background-color: var(--bs-success);
+    border-color: #3c3c3c;
+}
+
+.table {
+    border: 1px solid var(--bs-table-border-color);
+}
+
+.table>thead {
+    border: 1px solid var(--bs-table-border-color);
+}
+
+td.indent {
+    padding-left: 20px;
+}

@@ -81,6 +81,9 @@ def create_if_not_exists(role: Role):
 def get_role_by_name(role_name: str):
     return db.session.query(Role).filter_by(name=role_name).first()
 
+def get_role_by_uuid(role_uuid: str):
+    return db.session.query(Role).filter_by(uuid=role_uuid).first()
+
 # Will seed the Roles table in the db with some default roles.
 def seed_roles_if_required():
     create_if_not_exists(Role("System", "Global Role for the System it's self.", [], system=True, hidden=True))
