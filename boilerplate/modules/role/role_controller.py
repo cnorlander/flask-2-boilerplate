@@ -1,7 +1,8 @@
 from boilerplate.app import app
-from boilerplate.modules.role.role_model import Role, get_role_by_name, create_if_not_exists
+from boilerplate.modules.role.role_model import Role, get_role_by_name, get_role_by_uuid, create_if_not_exists
 from boilerplate.modules.role.role_actions import get_actions, get_action_names, register_action
 from boilerplate.modules.role.role_decorators import require_action
+from boilerplate.modules.user.user_model import replace_role
 from flask import render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required, current_user
 
@@ -55,7 +56,7 @@ def post_create_or_edit_role():
         flash("Something happened while updating the role. Please Try again and if you continue to experience issues contact an administrator", "error")
         return redirect(url_for("get_roles_list"))
     all_actions = get_action_names()
-    existing_actions = role.actions
+    existing_actions = existing_role.actions
     new_actions = []
     for action in all_actions:
         form_action = request.form.get("action-flag-" + action)
@@ -72,8 +73,36 @@ def post_create_or_edit_role():
     existing_role.description = role_description
     existing_role.system = role_system
     existing_role.hidden = role_hidden
-    # TODO The Save
-    flash(f"Role {role_name} has been edited!", "success")
+    if existing_role.save():
+        flash(f"Role {role_name} has been edited!", "success")
+    return redirect(url_for("get_roles_list"))
+
+@app.post('/roles/delete')
+@login_required
+@require_action("delete_role")
+def delete_role():
+
+    role_id = request.form.get("delete-role-id")
+    replacement_role_id = request.form.get("replacement-role-id")
+
+    if (not role_id) or (not replacement_role_id):
+        flash(
+            "Something happened while getting the information to delete the role. Please Try again and if you continue to experience issues contact an administrator",
+            "error")
+        return redirect(url_for("get_roles_list"))
+
+    print("1:", role_id, flush=True)
+    print("2:", replacement_role_id, flush=True)
+
+
+    existing_role = get_role_by_uuid(role_id)
+    replacement_role = get_role_by_uuid(replacement_role_id)
+
+    if (not existing_role) or (not replacement_role):
+        flash("Something happened while retreiving the role to delete. Please Try again and if you continue to experience issues contact an administrator", "error")
+        return redirect(url_for("get_roles_list"))
+
+    replace_role(existing_role, replacement_role)
     return redirect(url_for("get_roles_list"))
 
 # ==============================================================================================================================================================

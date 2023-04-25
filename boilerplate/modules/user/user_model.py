@@ -189,6 +189,22 @@ def send_password_reset(email: str):
         return "success"
     return "fail"
 
+def replace_role(existing_role: Role, new_role: Role):
+    try:
+        users = User.query.filter_by(role_uuid=existing_role.uuid).update({'role': new_role})
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+
+def delete_role(existing_role: Role, new_role: Role):
+    try:
+        users = User.query.filter_by(role_uuid=existing_role.uuid).update({'role': new_role})
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+
 # Generates a default user granting access to the app should there be no users in the database
 def seed_user_if_required():
     all_users = db.session.query(User).all()

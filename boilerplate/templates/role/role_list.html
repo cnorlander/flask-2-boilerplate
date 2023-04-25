@@ -89,7 +89,7 @@
     <!--                                                      Delete Roles Modal                                                           -->
     <!-- ================================================================================================================================= -->
     {% if current_user.can("delete_role") %}
-    <form action="{{url_for('post_create_or_edit_role')}}" method="POST" id="delete-role-form">
+    <form action="{{url_for('delete_role')}}" method="POST" id="delete-role-form">
     <div class="modal fade" tabindex="-1" id="delete-role-modal">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -103,10 +103,10 @@
                     In order to delete a role you must select a replacement role. If any users in the system are using the deleted
                     role will have their role changed to this replacement role.
                 </p>
-                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                <select id="replacement-role-id" name="replacement-role-id" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
                   {% for role in roles|reverse %}
                     {% if ((not role.system) and (not role.hidden) and role.active) or (current_user.role.system) %}
-                        <option value="{{role.id}}">{% if (not role.active) %}DEACTIVATED - {%endif%}{{role.name}}</option>
+                        <option value="{{role.uuid}}">{% if (not role.active) %}DEACTIVATED - {%endif%}{{role.name}}</option>
                     {% endif %}
                   {% endfor %}
                 </select>
@@ -124,7 +124,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i> Close</button>
-            <button type="button" onclick="submitPermissionsForm()" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Delete Role</button>
+            <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Delete Role</button>
           </div>
         </div>
       </div>
