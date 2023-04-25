@@ -28,8 +28,8 @@ class User(db.Model):
     email: str
     creation_time: datetime
 
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    uuid = db.Column(db.String(32), default=uuid.uuid4().hex, nullable=False, unique=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True)
+    uuid = db.Column(db.Uuid, index=True, nullable=False, unique=True, default=uuid.uuid4)
     active = db.Column(db.Boolean, nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
@@ -39,8 +39,8 @@ class User(db.Model):
     creation_time = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     reset_code = db.Column(db.String(32), default="NORESET", nullable=False, unique=False)
     reset_time = db.Column(db.DateTime, default=datetime.fromtimestamp(0), nullable=False)
-    role_uuid = db.Column(db.String(32), db.ForeignKey('role.uuid'), nullable=False)
-    role = db.relationship("Role")
+    role_uuid = db.Column(db.Uuid, db.ForeignKey('role.uuid'), nullable=False)
+    role = db.relationship("Role", back_populates="users")
 
     def __init__(self, email: str, first_name: str, last_name: str, password: str, role: Role):
         self.active = True
@@ -137,8 +137,10 @@ class AnonymousUser():
 # ==============================================================================================================================================================
 #                                                             Non-Class Utility Functions
 # ==============================================================================================================================================================
-def get_by_uuid(user_uuid: str):
-    return User.query.filter_by(uuid=user_uuid).first()
+def get_by_uuid(user_uuid):
+    if isinstance(user_uuid, str):
+        user_uuid = uuid.UUID(user_uuid)
+    return db.session.query(User).filter_by(uuid=user_uuid).first()
 
 def hash_password(password: str):
     salt = bcrypt.gensalt()
@@ -189,32 +191,33 @@ def send_password_reset(email: str):
         return "success"
     return "fail"
 
-def replace_role(existing_role: Role, new_role: Role):
+def replace_all_instances_of_role(existing_role: Role, new_role: Role):
     try:
-        users = User.query.filter_by(role_uuid=existing_role.uuid).update({'role': new_role})
+        users = User.query.filter_by(role_uuid=existing_role.uuid).update({'role_uuid': new_role.uuid})
         db.session.commit()
     except:
         db.session.rollback()
         raise
 
-def delete_role(existing_role: Role, new_role: Role):
-    try:
-        users = User.query.filter_by(role_uuid=existing_role.uuid).update({'role': new_role})
-        db.session.commit()
-    except:
-        db.session.rollback()
-        raise
 
-# Generates a default user granting access to the app should there be no users in the database
-def seed_user_if_required():
-    all_users = db.session.query(User).all()
-    admin_role = get_role_by_name("System Admin")
-    if len(all_users) == 0:
+def create_if_not_exists(user: User):
+    db_users = db.session.query(User).filter_by(email=user.email).all()
+    if len(db_users) == 0:
         try:
-            db.session.add(User("default@default.com", "default", "user", "iloveflask!", admin_role))
+            db.session.add(user)
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
             # Thar be threading afoot. Ignoring integrity errors here, other threads already having created the user.
             return
 
+
+# Generates a default user granting access to the app should there be no users in the database
+def seed_user_if_required():
+    if config.DB_SEED:
+        all_users = db.session.query(User).all()
+        admin_role = get_role_by_name("System Admin")
+        default_role = get_role_by_name("Default Role")
+        if len(all_users) == 0:
+            create_if_not_exists(User("admin@default.com", "Admin", "User", "iloveflask!", admin_role))
+            create_if_not_exists(User("default@default.com", "Default", "User", "iloveflask!", default_role))

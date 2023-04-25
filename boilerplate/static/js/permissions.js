@@ -124,10 +124,39 @@ function editRole(role){
     }
 }
 
-function deleteRole(roleId, roleName){
+function deleteRole(roleId, roleName, roleCount){
+    document.getElementById("delete-role-confirm").value = ""
+    document.getElementById("delete-role-confirm").classList.remove("is-invalid")
+    document.getElementById("replacement-info").style.display = "block";
+    if (roleCount == 0) {
+        document.getElementById("replacement-info").style.display = "none";
+    }
+    const replacementRoleElements = document.getElementById("replacement-role-id").querySelectorAll("option");
+    let setDefault = false;
+    for (const roleElement of replacementRoleElements) {
+        roleElement.disabled = false;
+        if (roleElement.value == roleId) {
+            console.log(roleElement.value, "==", roleId)
+            roleElement.disabled = true
+        }
+        else if (!setDefault) {
+            setDefault = true;
+            document.getElementById("replacement-role-id").value = roleElement.value;
+        }
+    }
     document.getElementById("delete-role-modal-header").innerHTML = 'Delete Role "' + roleName + '"?';
     document.getElementById("disabled-role-name").value = roleName;
     document.getElementById("delete-role-id").value = roleId;
+    document.getElementById("delete-role-count").value = roleCount;
+}
+
+function confirmDeleteRole(){
+    if (document.getElementById("delete-role-confirm").value != document.getElementById("disabled-role-name").value) {
+        document.getElementById("delete-role-confirm").classList.add("is-invalid")
+    }
+    else {
+        document.getElementById("delete-role-form").submit();
+    }
 }
 
 

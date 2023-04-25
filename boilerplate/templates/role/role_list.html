@@ -99,17 +99,20 @@
           </div>
           <div class="modal-body">
                 <input type="hidden" id="delete-role-id" name="delete-role-id" value="">
-                <p>
-                    In order to delete a role you must select a replacement role. If any users in the system are using the deleted
-                    role will have their role changed to this replacement role.
-                </p>
-                <select id="replacement-role-id" name="replacement-role-id" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                  {% for role in roles|reverse %}
-                    {% if ((not role.system) and (not role.hidden) and role.active) or (current_user.role.system) %}
-                        <option value="{{role.uuid}}">{% if (not role.active) %}DEACTIVATED - {%endif%}{{role.name}}</option>
-                    {% endif %}
-                  {% endfor %}
-                </select>
+                <input type="hidden" id="delete-role-count" name="delete-role-count" value="">
+                <div id="replacement-info">
+                    <p>
+                        In order to delete a role you must select a replacement role. If any users in the system are using the deleted
+                        role will have their role changed to this replacement role.
+                    </p>
+                    <select id="replacement-role-id" name="replacement-role-id" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                      {% for role in roles|reverse %}
+                        {% if ((not role.system) and (not role.hidden) and role.active) or (current_user.role.system) %}
+                            <option value="{{role.uuid}}">{% if (not role.active) %}DEACTIVATED - {%endif%}{{role.name}}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                </div>
                 <p>
                     To confirm you are deleting the correct Role please enter the role as it appears above.
                 </p>
@@ -118,13 +121,13 @@
                     <label for="role-description">Role Name</label>
                 </div>
                 <div class="form-floating mb-2">
-                    <input name="delete-roll-confirm" type="text" class="form-control" id="delete-roll-confirm" required>
+                    <input name="delete-role-confirm" type="text" class="form-control" id="delete-role-confirm" required>
                     <label for="role-description">Confirm Role Name</label>
                 </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i> Close</button>
-            <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Delete Role</button>
+            <button type="button" onclick="confirmDeleteRole()" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Delete Role</button>
           </div>
         </div>
       </div>
@@ -143,7 +146,7 @@
             <h2 class="accordion-header" id="heading{{loop.index}}">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{loop.index}}" aria-expanded="true"
                         aria-controls="collapse{{loop.index}}">
-                    <h3>{% if (not role.active) %}DEACTIVATED - {%endif%}{{role.name}}</h3>
+                    <h3>{% if (not role.active) %}DEACTIVATED - {%endif%}{{role.name}}</h3><i class="fa-solid fa-users ms-3"></i><strong class="ms-1">{{role.users | length}}</strong>
                 </button>
             </h2>
             <div id="collapse{{loop.index}}" class="accordion-collapse collapse" aria-labelledby="heading{{loop.index}}">
@@ -206,7 +209,7 @@
                         </table>
                     </div>
                     {%if current_user.can("delete_role") %}
-                    <button onclick='deleteRole("{{ role.uuid }}", "{{ role.name }}")' type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-role-modal">
+                    <button onclick='deleteRole("{{ role.uuid }}", "{{ role.name }}", "{{ role.users | length }}")' type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-role-modal">
                       <i class="fa-solid fa-trash-can"></i> Delete Role
                     </button>
                     {%endif%}

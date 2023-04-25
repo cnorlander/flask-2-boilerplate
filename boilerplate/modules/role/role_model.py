@@ -1,8 +1,10 @@
 from boilerplate.db import db
+from sqlalchemy.orm import relationship
 from boilerplate.modules.role.role_actions import get_action_names
 from sqlalchemy.sql import func
 from sqlalchemy.exc import IntegrityError
 from typing import List
+import boilerplate.config as config
 import uuid
 import json
 from datetime import datetime
@@ -29,7 +31,7 @@ class Role(db.Model):
 
     # Model Definitions
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    uuid = db.Column(db.String(32), default=uuid.uuid4().hex, nullable=False, unique=True)
+    uuid = db.Column(db.Uuid, index=True, nullable=False, unique=True, default=uuid.uuid4)
     active = db.Column(db.Boolean, default=True, nullable=False)
     hidden = db.Column(db.Boolean, default=False, nullable=False)
     system = db.Column(db.Boolean, default=False, nullable=False)
@@ -37,6 +39,7 @@ class Role(db.Model):
     description = db.Column(db.Text, nullable=False)
     actions = db.Column(db.JSON, nullable=False)
     creation_time = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    users = relationship("User", back_populates="role")
 
     # Primary constructor
     def __init__(self, name: str, description: str, actions: List[dict], hidden: bool = False, system: bool = False, active: bool = True):
@@ -51,6 +54,13 @@ class Role(db.Model):
         if action in self.actions:
             return True
         return False
+    def delete(self):
+        try:
+            db.session.delete(self)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            raise
 
 # ==============================================================================================================================================================
 #                                                            Non-Class Utility Functions
@@ -66,6 +76,7 @@ def update_system_roles():
         db.session.rollback()
         raise
 
+
 # Will create a role if a role with that name doesn't already exist
 def create_if_not_exists(role: Role):
     db_roles = db.session.query(Role).filter_by(name=role.name).all()
@@ -75,16 +86,20 @@ def create_if_not_exists(role: Role):
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
+            raise
             # Thar be threading afoot. Ignoring integrity errors here, other threads already having created the user.
-            return
 
 def get_role_by_name(role_name: str):
     return db.session.query(Role).filter_by(name=role_name).first()
 
-def get_role_by_uuid(role_uuid: str):
+def get_role_by_uuid(role_uuid):
+    if isinstance(role_uuid, str):
+        role_uuid = uuid.UUID(role_uuid)
     return db.session.query(Role).filter_by(uuid=role_uuid).first()
 
 # Will seed the Roles table in the db with some default roles.
 def seed_roles_if_required():
-    create_if_not_exists(Role("System", "Global Role for the System it's self.", [], system=True, hidden=True))
-    create_if_not_exists(Role("System Admin", "Global Role for a System Admin.", [], system=True, hidden=False))
+    if config.DB_SEED:
+        create_if_not_exists(Role("System", "Global Role for the System it's self.", [], system=True, hidden=True))
+        create_if_not_exists(Role("System Admin", "Global Role for a System Admin.", [], system=True, hidden=False))
+        create_if_not_exists(Role("Default Role", "A Default Role for Testing.", [], system=False, hidden=False))
