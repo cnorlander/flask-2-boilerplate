@@ -134,6 +134,7 @@ def post_send_password_reset():
     flash("Could not reset password. Please contact support to resolve this issue.", "error")
     return redirect(url_for("get_login_page"))
 
+
 # ==============================================================================================================================================================
 #                                                                 Action Registrations
 # ==============================================================================================================================================================
@@ -141,4 +142,3 @@ register_action("read_users_list", "users", "Allows a user to see the list of us
 register_action("create_or_edit_user", "users", "Allows a user create or edit a user.", ("read_users_list",))
 register_action("deactivate_user", "users", "Allows a user to deactivate a user account.", ("read_users_list",))
 register_action("manage_deactivated_users", "users", "Allows a user to see, edit and activate deactivated users.", ("read_users_list","deactivate_user",))
-register_action("create_system_admins", "users", "Allows a user create System Admins.", system_only=True)

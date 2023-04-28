@@ -248,7 +248,7 @@
                     {% if (role.users | length) > 0 %}
                     <ul>
                         {% for user in role.users %}
-                        <li><a href="{{url_for(" get_user_profile", profile_uuid=user.uuid)}}">{{user.first_name}} {{user.last_name}} - {{user.email}}</a></li>
+                        <li><a href="{{url_for("get_user_profile", profile_uuid=user.uuid)}}">{{user.first_name}} {{user.last_name}} - {{user.email}}</a></li>
                         {% endfor %}
                     </ul>
                     {% else %}

@@ -251,6 +251,11 @@ svg.profile-color-8>g>circle {
     transform: translate(0%, -50%);
 }
 
+.profile-details {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
 @media (max-width: 540px) {
     .wrapper> :is(aside, main) {
         grid-area: stack;

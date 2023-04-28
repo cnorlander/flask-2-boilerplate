@@ -26,3 +26,17 @@ function filter(parentId, filterItem, word){
     }
 }
 
+let initialState = true;
+function toggleInitialVisability(){
+    initiallyShownElements = document.querySelectorAll(".initial-shown")
+    initiallyHiddenElements = document.querySelectorAll(".initial-hidden")
+    for (const element of initiallyShownElements){
+        if (initialState) element.classList.add("d-none")
+        else element.classList.remove("d-none")
+    }
+    for (const element of initiallyHiddenElements){
+        if (initialState) element.classList.remove("d-none")
+        else element.classList.add("d-none")
+    }
+    initialState = !initialState;
+}
