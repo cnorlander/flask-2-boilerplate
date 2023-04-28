@@ -8,9 +8,9 @@ This is a basic Flask web application created to be a jumping off point for futu
 - [X] SQLite DB file for portability
 - [X] A Fancy logon page.
 - [X] A menu template
-- [ ] Some basic page templates.
-- [ ] A user management page.
-- [ ] A role management page.
+- [X] Some basic page templates.
+- [ ] User management pages
+- [X] A role management page.
 - [X] An easy to use and flexible role and action system for managing permissions
 - [X] Docker and Docker-Compose files for easy deployment
 - [X] Gunicorn WSGI HTTP Server
