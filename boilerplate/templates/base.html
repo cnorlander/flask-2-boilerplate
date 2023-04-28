@@ -20,7 +20,7 @@
                 {% include "components/menu.html" %}
             </div>
             <div class="account-block">
-                <svg class="profile-picture" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                <svg class="profile-picture sidenav profile-color-{{ current_user.id | profile_color_id }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
                      viewBox="0 0 500 500">
                     <g>
                         <circle id="circle" cx="250" cy="250" r="230"></circle>
@@ -45,12 +45,10 @@
         </header>
         <div class="scroll-pane">
             <section>
-                <article>
                     {% for message in get_flashed_messages() %}
                         <div class="flash">{{ message }}</div>
                     {% endfor %}
                     {% block content %}{% endblock %}
-                </article>
             </section>
         </div>
     </main>

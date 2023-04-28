@@ -2,6 +2,18 @@
     --bs-modal-width: 1000px;
 }
 
+.sm-modal {
+    --bs-modal-width: 400px;
+}
+
+.md-modal {
+    --bs-modal-width: 600px;
+}
+
+.lg-modal {
+    --bs-modal-width: 800px;
+}
+
 .form-check-input.form-check-success:checked {
     background-color: var(--bs-success);
     border-color: #3c3c3c;

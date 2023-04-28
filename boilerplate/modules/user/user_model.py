@@ -10,7 +10,7 @@ import boilerplate.config as config
 import bcrypt
 import base64
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 
 # ==============================================================================================================================================================
@@ -42,8 +42,8 @@ class User(db.Model):
     role_uuid = db.Column(db.Uuid, db.ForeignKey('role.uuid'), nullable=False)
     role = db.relationship("Role", back_populates="users")
 
-    def __init__(self, email: str, first_name: str, last_name: str, password: str, role: Role):
-        self.active = True
+    def __init__(self, email: str, first_name: str, last_name: str, password: str, role: Role, active=True):
+        self.active = active
         self.email = email
         self.first_name = first_name
         self.last_name = last_name
@@ -61,6 +61,9 @@ class User(db.Model):
     @property
     def is_anonymous(self):
         return False
+
+    def dict(self):
+        return asdict(self)
 
     def get_id(self):
         return self.uuid
@@ -140,7 +143,7 @@ class AnonymousUser():
 def get_by_uuid(user_uuid):
     if isinstance(user_uuid, str):
         user_uuid = uuid.UUID(user_uuid)
-    return db.session.query(User).filter_by(uuid=user_uuid).first()
+    return User.query.filter_by(uuid=user_uuid).first()
 
 def hash_password(password: str):
     salt = bcrypt.gensalt()
@@ -221,3 +224,4 @@ def seed_user_if_required():
         if len(all_users) == 0:
             create_if_not_exists(User("admin@default.com", "Admin", "User", "iloveflask!", admin_role))
             create_if_not_exists(User("default@default.com", "Default", "User", "iloveflask!", default_role))
+            create_if_not_exists(User("deactive@default.com", "Deactive", "User", "iloveflask!", default_role, active=False))

@@ -1,7 +1,12 @@
 from boilerplate.app import app
 from urllib.parse import urlparse, urljoin, unquote
 from flask import request, url_for
+import re
 import importlib
+
+def validate_uuid(uuid_string: str):
+    uuid_regex = re.compile(r'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$')
+    return bool(uuid_regex.match(uuid_string))
 
 def is_safe_url(target: str):
     ref_url = urlparse(request.host_url)

@@ -7,10 +7,22 @@ document.addEventListener("DOMContentLoaded", function(event){
       var isNavOpen = window.location.hash == '#sidenav-open';
       var isDescendant = nav.contains(event.target);
 
-
       if (!isDescendant && isNavOpen) {
         document.getElementById("sidenav-close").click()
       }
     }
 });
+
+function filter(parentId, filterItem, word){
+    const table = document.getElementById(parentId);
+    const rows = table.getElementsByTagName(filterItem);
+    for (let i = 1; i < rows.length; i++) {
+        const rowText = rows[i].textContent.toLowerCase();
+        if (!rowText.includes(word.toLowerCase())) {
+            rows[i].style.display = 'none';
+        } else {
+            rows[i].style.display = '';
+        }
+    }
+}
 
