@@ -20,7 +20,8 @@
                 {% include "components/menu.html" %}
             </div>
             <div class="account-block">
-                <svg class="profile-picture sidenav profile-color-{{ current_user.id | profile_color_id }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                <svg class="profile-picture sidenav profile-color-{{ current_user.id | profile_color_id }}" xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
                      viewBox="0 0 500 500">
                     <g>
                         <circle id="circle" cx="250" cy="250" r="230"></circle>
@@ -30,7 +31,7 @@
                 <div class="vert-float-wrapper">
                     <div class="vert-float">
                         <span style="font-weight: 600;">{{ current_user.first_name.title() }} {{ current_user.last_name.title() }}</span><br>
-                        <a class="btn btn-secondary btn-sm"href="/logout">Logout</a>
+                        <a class="btn btn-secondary btn-sm" href="/logout">Logout</a>
                     </div>
                 </div>
             </div>
@@ -45,10 +46,10 @@
         </header>
         <div class="scroll-pane">
             <section>
-                    {% for message in get_flashed_messages() %}
-                        <div class="flash">{{ message }}</div>
-                    {% endfor %}
-                    {% block content %}{% endblock %}
+                {% for message in get_flashed_messages() %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {% block content %}{% endblock %}
             </section>
         </div>
     </main>

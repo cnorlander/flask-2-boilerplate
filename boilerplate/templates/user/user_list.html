@@ -1,187 +1,187 @@
 {% extends "base.html" %}
 {% block title %}Users{% endblock %}
 {% block local_head %}
-<script src="/static/js/password-validate.js"></script>
+    <script src="/static/js/password-validate.js"></script>
 {% endblock %}
 {% block content %}
-<article class="solid">
-    {% if current_user.can("create_or_edit_user")%}
-    <!-- ================================================================================================================================= -->
-    <!--                                                      Create User Modal                                                           -->
-    <!-- ================================================================================================================================= -->
-    <form action="{{url_for('post_create_or_edit_role')}}" method="POST" id="create-user-form">
-        <div class="modal md-modal fade" tabindex="-1" id="create-user-modal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="create-user-modal-header">Create New User</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <h4>Basic Info</h4>
-                        <div class="form-floating mb-2">
-                            <input name="first-name" type="text" class="form-control" id="first-name" required>
-                            <label for="first-name">First Name</label>
-                        </div>
-                        <div class="form-floating mb-2">
-                            <input name="last-name" type="text" class="form-control" id="last-name" required>
-                            <label for="last-name">Last Name</label>
-                        </div>
-                        <div class="form-floating mb-2">
-                            <input name="email" type="email" class="form-control" id="email" required>
-                            <label for="email">Email</label>
-                        </div>
-                        <hr>
-                        <h4>Role</h4>
-                        <select id="replacement-role-id" name="replacement-role-id"
-                                class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
-                            {% for role in roles|reverse %}
-                            {% if ((not role.system) and (not role.hidden) and role.active) or
+    <article class="solid">
+        {% if current_user.can("create_or_edit_user") %}
+            <!-- ================================================================================================================================= -->
+            <!--                                                      Create User Modal                                                           -->
+            <!-- ================================================================================================================================= -->
+            <form action="{{ url_for('post_create_or_edit_role') }}" method="POST" id="create-user-form">
+                <div class="modal md-modal fade" tabindex="-1" id="create-user-modal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="create-user-modal-header">Create New User</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h4>Basic Info</h4>
+                                <div class="form-floating mb-2">
+                                    <input name="first-name" type="text" class="form-control" id="first-name" required>
+                                    <label for="first-name">First Name</label>
+                                </div>
+                                <div class="form-floating mb-2">
+                                    <input name="last-name" type="text" class="form-control" id="last-name" required>
+                                    <label for="last-name">Last Name</label>
+                                </div>
+                                <div class="form-floating mb-2">
+                                    <input name="email" type="email" class="form-control" id="email" required>
+                                    <label for="email">Email</label>
+                                </div>
+                                <hr>
+                                <h4>Role</h4>
+                                <select id="replacement-role-id" name="replacement-role-id"
+                                        class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                                    {% for role in roles|reverse %}
+                                        {% if ((not role.system) and (not role.hidden) and role.active) or
                             (current_user.role.system) %}
-                            <option value="{{role.uuid}}">{% if (not role.active) %}DEACTIVATED -
-                                {%endif%}{{role.name}}
-                            </option>
-                            {% endif %}
-                            {% endfor %}
-                        </select>
-                        <hr>
-                        <h4>Password</h4>
-                        <ul id="password-requirements">
-                            <li>Passwords must contain at least {{PASSWORD_MIN_CHARACTERS}} characters.</li>
-                            <li>Passwords may not contain more than {{PASSWORD_MAX_CHARACTERS}} characters.</li>
-                            {% if PASSWORD_REQUIRE_LOWER_CASE %}
-                            <li>Passwords must contain at least one lower case letter.</li>
-                            {% endif %}
-                            {% if PASSWORD_REQUIRE_UPPER_CASE %}
-                            <li>Passwords must contain at least one upper case letter.</li>
-                            {% endif %}
-                            {% if PASSWORD_REQUIRE_NUMERALS %}
-                            <li>Passwords must contain at least one number.</li>
-                            {% endif %}
-                            {% if PASSWORD_REQUIRE_SPECIAL_CHARACTERS %}
-                            <li>Passwords must contain at least one special character.</li>
-                            <li>Allowed special characters include
-                                <pre>{{PASSWORD_LIST_OF_ALLOWED_SPECIAL_CHARACTERS}}</pre>
-                            </li>
-                            {% endif %}
-                        </ul>
-                        <div class="form-floating mb-2">
-                            <input name="password" type="password" class="form-control" id="password" required
-                                   oninput="validatePassword({{PASSWORD_MIN_CHARACTERS}}, {{PASSWORD_MAX_CHARACTERS}}, {{PASSWORD_REQUIRE_NUMERALS|string|lower}}, {{PASSWORD_REQUIRE_UPPER_CASE|string|lower}}, {{PASSWORD_REQUIRE_LOWER_CASE|string|lower}}, {{PASSWORD_REQUIRE_SPECIAL_CHARACTERS|string|lower}}, '{{PASSWORD_LIST_OF_ALLOWED_SPECIAL_CHARACTERS|safe}}')">
-                            <label for="password">Password</label>
-                        </div>
-                        <div class="form-floating mb-2">
-                            <input name="confirm-password" type="password" class="form-control" id="confirm-password"
-                                   required>
-                            <label for="confirm-password">Confirm Password</label>
-                        </div>
+                                            <option value="{{ role.uuid }}">{% if (not role.active) %}DEACTIVATED -
+                                            {% endif %}{{ role.name }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <hr>
+                                <h4>Password</h4>
+                                <ul id="password-requirements">
+                                    <li>Passwords must contain at least {{ PASSWORD_MIN_CHARACTERS }} characters.</li>
+                                    <li>Passwords may not contain more than {{ PASSWORD_MAX_CHARACTERS }} characters.</li>
+                                    {% if PASSWORD_REQUIRE_LOWER_CASE %}
+                                        <li>Passwords must contain at least one lower case letter.</li>
+                                    {% endif %}
+                                    {% if PASSWORD_REQUIRE_UPPER_CASE %}
+                                        <li>Passwords must contain at least one upper case letter.</li>
+                                    {% endif %}
+                                    {% if PASSWORD_REQUIRE_NUMERALS %}
+                                        <li>Passwords must contain at least one number.</li>
+                                    {% endif %}
+                                    {% if PASSWORD_REQUIRE_SPECIAL_CHARACTERS %}
+                                        <li>Passwords must contain at least one special character.</li>
+                                        <li>Allowed special characters include
+                                            <pre>{{ PASSWORD_LIST_OF_ALLOWED_SPECIAL_CHARACTERS }}</pre>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                                <div class="form-floating mb-2">
+                                    <input name="password" type="password" class="form-control" id="password" required
+                                           oninput="validatePassword({{ PASSWORD_MIN_CHARACTERS }}, {{ PASSWORD_MAX_CHARACTERS }}, {{ PASSWORD_REQUIRE_NUMERALS|string|lower }}, {{ PASSWORD_REQUIRE_UPPER_CASE|string|lower }}, {{ PASSWORD_REQUIRE_LOWER_CASE|string|lower }}, {{ PASSWORD_REQUIRE_SPECIAL_CHARACTERS|string|lower }}, '{{ PASSWORD_LIST_OF_ALLOWED_SPECIAL_CHARACTERS|safe }}')">
+                                    <label for="password">Password</label>
+                                </div>
+                                <div class="form-floating mb-2">
+                                    <input name="confirm-password" type="password" class="form-control" id="confirm-password"
+                                           required>
+                                    <label for="confirm-password">Confirm Password</label>
+                                </div>
 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
-                                class="fa-solid fa-xmark"></i> Close
-                        </button>
-                        <button type="button" onclick="submitPermissionsForm()" class="btn btn-success"><i
-                                class="fa-solid fa-floppy-disk"></i> Save Role
-                        </button>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                                        class="fa-solid fa-xmark"></i> Close
+                                </button>
+                                <button type="button" onclick="submitPermissionsForm()" class="btn btn-success"><i
+                                        class="fa-solid fa-floppy-disk"></i> Save Role
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
+            <button onclick="" type="button" class="btn btn-sm btn-success float-end" data-bs-toggle="modal" data-bs-target="#create-user-modal">
+                <i class="fa-solid fa-plus"></i> New User
+            </button>
+        {% endif %}
+        <h2>Active Users</h2>
+        <hr>
+        <div class="form-floating mt-1 mb-3">
+            <input type="text" class="form-control" oninput="filter('active-users-table', 'ul', this.value)"
+                   id="user-search" placeholder="Search">
+            <label for="user-search"><i class="fa-solid fa-magnifying-glass"></i> Search Users</label>
         </div>
-    </form>
-    <button onclick="" type="button" class="btn btn-sm btn-success float-end" data-bs-toggle="modal" data-bs-target="#create-user-modal">
-        <i class="fa-solid fa-plus"></i> New User
-    </button>
-    {% endif %}
-    <h2>Active Users</h2>
-    <hr>
-    <div class="form-floating mt-1 mb-3">
-        <input type="text" class="form-control" oninput="filter('active-users-table', 'ul', this.value)"
-               id="user-search" placeholder="Search">
-        <label for="user-search"><i class="fa-solid fa-magnifying-glass"></i> Search Users</label>
-    </div>
-    <div class="responsive-table-wrapper">
-        <div id="active-users-table" class="responsive-list">
-            <ul class="fw-bold">
-                <li class="ps-3">Name</li>
-                <li>Role</li>
-                <li>Email</li>
-                <li>Last Logon</li>
-                <li>Profile</li>
-            </ul>
-            {% for user in active_users%}
-            <ul>
-                <li class="no-label fw-bold" data-label="name">
-                    <svg class="profile-picture list profile-color-{{ user.id | profile_color_id }}"
-                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                         xml:space="preserve"
-                         viewBox="0 0 500 500">
+        <div class="responsive-table-wrapper">
+            <div id="active-users-table" class="responsive-list">
+                <ul class="fw-bold">
+                    <li class="ps-3">Name</li>
+                    <li>Role</li>
+                    <li>Email</li>
+                    <li>Last Logon</li>
+                    <li>Profile</li>
+                </ul>
+                {% for user in active_users %}
+                    <ul>
+                        <li class="no-label fw-bold" data-label="name">
+                            <svg class="profile-picture list profile-color-{{ user.id | profile_color_id }}"
+                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                 xml:space="preserve"
+                                 viewBox="0 0 500 500">
                     <g>
                         <circle id="circle" cx="250" cy="250" r="230"></circle>
                         <text id="letter" x="51%" y="53%" text-anchor="middle"
                               dy=".3em">{{ user.get_initials() }}</text>
                     </g>
                     </svg>
-                    {{user.first_name}} {{user.last_name}}
-                </li>
-                <li data-label="role">{{user.role.name}}</li>
-                <li data-label="email">{{user.email}}</li>
-                <li data-label="last logon">{{user.last_login}}</li>
-                <li class="no-label" data-label="profile">
-                    <a class="btn btn-sm btn-primary" href="{{ url_for('get_user_profile', profile_uuid=user.uuid) }}">
-                        <i class="fa-solid fa-address-card"></i> View Profile
-                    </a>
-                </li>
-            </ul>
-            {% endfor %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        </li>
+                        <li data-label="role">{{ user.role.name }}</li>
+                        <li data-label="email">{{ user.email }}</li>
+                        <li data-label="last logon">{{ user.last_login }}</li>
+                        <li class="no-label" data-label="profile">
+                            <a class="btn btn-sm btn-primary" href="{{ url_for('get_user_profile', profile_uuid=user.uuid) }}">
+                                <i class="fa-solid fa-address-card"></i> View Profile
+                            </a>
+                        </li>
+                    </ul>
+                {% endfor %}
+            </div>
         </div>
-    </div>
-    {% if (deactivated_users | length) > 0 %}
-    <hr>
-    <button class="btn btn-secondary mb-3" type="button" data-bs-toggle="collapse"
-            data-bs-target="#deactivated-user-list" aria-expanded="false" aria-controls="Show deactivated users.">
-        <i class="fa-solid fa-eye"></i> Show/Hide Deactivated Users
-    </button>
-    <div class="collapse" id="deactivated-user-list">
-        <h4>Deactivated Users</h4>
+        {% if (deactivated_users | length) > 0 %}
+            <hr>
+            <button class="btn btn-secondary mb-3" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#deactivated-user-list" aria-expanded="false" aria-controls="Show deactivated users.">
+                <i class="fa-solid fa-eye"></i> Show/Hide Deactivated Users
+            </button>
+            <div class="collapse" id="deactivated-user-list">
+                <h4>Deactivated Users</h4>
 
-        <div class="responsive-table-wrapper">
-            <div class="responsive-list">
-                <ul>
-                    <li>Name</li>
-                    <li>Role</li>
-                    <li>Email</li>
-                    <li>Last Logon</li>
-                    <li>Profile</li>
-                </ul>
-                {% for user in deactivated_users%}
-                <ul>
-                    <li class="no-label fw-bold" data-label="name">
-                        <svg class="profile-picture list profile-color-{{ user.id | profile_color_id }}"
-                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                             xml:space="preserve"
-                             viewBox="0 0 500 500">
+                <div class="responsive-table-wrapper">
+                    <div class="responsive-list">
+                        <ul>
+                            <li>Name</li>
+                            <li>Role</li>
+                            <li>Email</li>
+                            <li>Last Logon</li>
+                            <li>Profile</li>
+                        </ul>
+                        {% for user in deactivated_users %}
+                            <ul>
+                                <li class="no-label fw-bold" data-label="name">
+                                    <svg class="profile-picture list profile-color-{{ user.id | profile_color_id }}"
+                                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                         xml:space="preserve"
+                                         viewBox="0 0 500 500">
                             <g>
                                 <circle id="circle" cx="250" cy="250" r="230"></circle>
                                 <text id="letter" x="51%" y="53%" text-anchor="middle"
                                       dy=".3em">{{ user.get_initials() }}</text>
                             </g>
                         </svg>
-                        {{user.first_name}} {{user.last_name}}
-                    </li>
-                    <li data-label="email">{{user.role.name}}</li>
-                    <li data-label="email">{{user.email}}</li>
-                    <li data-label="last logon">{{user.last_login}}</li>
-                    <li class="no-label text-end" data-label="profile">
-                        <a class="btn btn-sm btn-primary" href="{{ url_for('get_user_profile', profile_uuid=user.uuid) }}">
-                            <i class="fa-solid fa-address-card"></i> View
-                        </a>
-                    </li>
-                </ul>
-                {% endfor %}
+                                    {{ user.first_name }} {{ user.last_name }}
+                                </li>
+                                <li data-label="email">{{ user.role.name }}</li>
+                                <li data-label="email">{{ user.email }}</li>
+                                <li data-label="last logon">{{ user.last_login }}</li>
+                                <li class="no-label text-end" data-label="profile">
+                                    <a class="btn btn-sm btn-primary" href="{{ url_for('get_user_profile', profile_uuid=user.uuid) }}">
+                                        <i class="fa-solid fa-address-card"></i> View
+                                    </a>
+                                </li>
+                            </ul>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    {% endif %}
-</article>
+        {% endif %}
+    </article>
 {% endblock %}

@@ -1,17 +1,15 @@
-
-
 function flash(textElement) {
-  textElement.classList.add("flashed");
-  setTimeout(function() {
-      textElement.classList.remove("flashed");
-  }, 100);
+    textElement.classList.add("flashed");
+    setTimeout(function () {
+        textElement.classList.remove("flashed");
+    }, 100);
 }
 
 function createBackRequirements(item) {
     const itemID = item.id;
     const requires = item.getAttribute("data-requires");
     if (requires != null) {
-        for (const id of requires.replace(/ /g,'').split(",")) {
+        for (const id of requires.replace(/ /g, '').split(",")) {
             requiredElement = document.getElementById(id);
             existingValues = requiredElement.getAttribute("data-required-by");
             if (existingValues == null || existingValues == "") {
@@ -35,10 +33,10 @@ function checkboxClicked(target, seen) {
     const requiredByString = target.getAttribute("data-required-by");
     const requiredString = target.getAttribute("data-requires");
     if (requiredString != null && requiredString != "") {
-        requiredIDs = requiredString.replace(/ /g,'').split(",");
+        requiredIDs = requiredString.replace(/ /g, '').split(",");
     }
     if (requiredByString != null && requiredString != "") {
-        requiredByIDs = requiredByString.replace(/ /g,'').split(",");
+        requiredByIDs = requiredByString.replace(/ /g, '').split(",");
     }
 
     if (!target.checked && requiredByIDs.length > 0) {
@@ -65,66 +63,69 @@ function createListeners(item, index) {
     });
 }
 
-function resetAllCheckboxes(){
-  for (const checkbox of checkboxes) {
-    checkbox.checked = false;
-  }
+function resetAllCheckboxes() {
+    for (const checkbox of checkboxes) {
+        checkbox.checked = false;
+    }
 }
 
-function selectAllCheckboxes(){
-  for (const checkbox of checkboxes) {
-    checkbox.checked = true;
-  }
+function selectAllCheckboxes() {
+    for (const checkbox of checkboxes) {
+        checkbox.checked = true;
+    }
 }
 
-function submitPermissionsForm(){
+function submitPermissionsForm() {
     const checkboxes = document.querySelectorAll("input[type=checkbox]");
     if (document.forms["permissions-form"].reportValidity()) {
-        for (const checkbox of checkboxes){
-            if (checkbox.checked){ checkbox.value = "true"; }
-            else {checkbox.value = "false"; }
-        document.forms["permissions-form"].submit();
+        for (const checkbox of checkboxes) {
+            if (checkbox.checked) {
+                checkbox.value = "true";
+            } else {
+                checkbox.value = "false";
+            }
+            document.forms["permissions-form"].submit();
         }
     }
 }
 
-function clearModal(){
+function clearModal() {
     document.getElementById("create-edit-role-modal-header").innerHTML = "Create New Role";
     document.getElementById("role-id").value = "new";
     const checkboxes = document.querySelectorAll("input[type=checkbox]");
     const textboxes = document.querySelectorAll("input[type=text]");
-    for (const checkbox of checkboxes){
+    for (const checkbox of checkboxes) {
         checkbox.checked = false;
     }
-    for (const textbox of textboxes){
+    for (const textbox of textboxes) {
         textbox.value = "";
     }
 }
 
-function editRole(role){
+function editRole(role) {
     clearModal();
     document.getElementById("create-edit-role-modal-header").innerHTML = 'Editing Role "' + role.name + '"';
     document.getElementById("role-id").value = role.uuid;
     document.getElementById("role-name").value = role.name;
     document.getElementById("role-description").value = role.description;
     roleHiddenCheckbox = document.getElementById("role-hidden")
-    if (roleHiddenCheckbox != null){
+    if (roleHiddenCheckbox != null) {
         roleHiddenCheckbox.checked = role.hidden
     }
     roleSystemCheckbox = document.getElementById("role-system")
-    if (roleSystemCheckbox != null){
+    if (roleSystemCheckbox != null) {
         roleSystemCheckbox.checked = role.system
     }
 
-    for (const action of role.actions){
+    for (const action of role.actions) {
         actionCheckbox = document.getElementById(action);
-        if (actionCheckbox != null){
+        if (actionCheckbox != null) {
             actionCheckbox.checked = true
         }
     }
 }
 
-function deleteRole(roleId, roleName, roleCount){
+function deleteRole(roleId, roleName, roleCount) {
     document.getElementById("delete-role-confirm").value = ""
     document.getElementById("delete-role-confirm").classList.remove("is-invalid")
     document.getElementById("replacement-info").style.display = "block";
@@ -138,8 +139,7 @@ function deleteRole(roleId, roleName, roleCount){
         if (roleElement.value == roleId) {
             console.log(roleElement.value, "==", roleId)
             roleElement.disabled = true
-        }
-        else if (!setDefault) {
+        } else if (!setDefault) {
             setDefault = true;
             document.getElementById("replacement-role-id").value = roleElement.value;
         }
@@ -150,17 +150,16 @@ function deleteRole(roleId, roleName, roleCount){
     document.getElementById("delete-role-count").value = roleCount;
 }
 
-function confirmDeleteRole(){
+function confirmDeleteRole() {
     if (document.getElementById("delete-role-confirm").value != document.getElementById("disabled-role-name").value) {
         document.getElementById("delete-role-confirm").classList.add("is-invalid")
-    }
-    else {
+    } else {
         document.getElementById("delete-role-form").submit();
     }
 }
 
 
-document.addEventListener("DOMContentLoaded", function(event){
+document.addEventListener("DOMContentLoaded", function (event) {
     const checkboxes = document.querySelectorAll(".dependent-checkboxes input[type=checkbox]");
     checkboxes.forEach(createListeners);
     checkboxes.forEach(createBackRequirements);

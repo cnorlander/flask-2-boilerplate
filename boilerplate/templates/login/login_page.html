@@ -19,7 +19,7 @@
                 {% if messages %}
                     {% for message in messages %}
                         <div class="alert alert-primary alert-dismissible fade show mt-2 ms-2 me-2 text-start" role="alert">
-                            {{ message}}
+                            {{ message }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     {% endfor %}
@@ -39,13 +39,13 @@
                 {% if successes %}
                     {% for success in successes %}
                         <div class="alert alert-success alert-dismissible fade show mt-2 ms-2 me-2 text-start" role="alert">
-                            {{ success}}
+                            {{ success }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     {% endfor %}
                 {% endif %}
             {% endwith %}
-            <form action="{{url_for('post_login_user')}}" method="POST">
+            <form action="{{ url_for('post_login_user') }}" method="POST">
                 <div class="form-floating mb-2">
                     <input name="email" type="email" class="form-control" id="email" placeholder="name@example.com" required>
                     <label for="email">Email address</label>
@@ -68,7 +68,7 @@
     <div class="modal fade" id="passwordResetModal" tabindex="-1" aria-labelledby="passwordResetModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{url_for('post_send_password_reset')}}" method="POST">
+                <form action="{{ url_for('post_send_password_reset') }}" method="POST">
                     <div class="modal-header">
                         <h5 class="modal-title" id="passwordResetModalLabel">Reset Password</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

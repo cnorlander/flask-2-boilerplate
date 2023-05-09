@@ -5,93 +5,107 @@
 {% endblock %}
 {% block content %}
     <div class="container-xl mt-2">
-    <div class="row">
-        <div class="col-xl-4">
-            <!-- Profile picture card-->
-            <div class="card mb-4 mb-xl-0">
-                <div class="card-header">Profile Picture</div>
-                <div class="card-body text-center">
-                    <h1>{{user.first_name}} {{user.last_name}}</h1>
-                    <!-- Profile picture image-->
-                    <svg class="profile-picture profile profile-color-{{ user.id | profile_color_id }}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
-                     viewBox="0 0 500 500">
+        <div class="row">
+            <div class="col-xl-4">
+                <!-- Profile picture card-->
+                <div class="card mb-4 mb-xl-0">
+                    <div class="card-header">Profile Picture</div>
+                    <div class="card-body text-center">
+                        <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+                        <!-- Profile picture image-->
+                        <svg class="profile-picture profile profile-color-{{ user.id | profile_color_id }}" xmlns="http://www.w3.org/2000/svg"
+                             xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                             viewBox="0 0 500 500">
                     <g>
                         <circle id="circle" cx="250" cy="250" r="230"></circle>
                         <text id="letter" x="51%" y="53%" text-anchor="middle" dy=".3em">{{ user.get_initials() }}</text>
                     </g>
-            </svg>
-                    <!-- Profile picture help block
-                    <div class="small font-italic text-muted mb-4 initial-hidden d-none">JPG or PNG no larger than 5 MB</div>
-                    Profile picture upload button
-                    <button class="btn btn-primary initial-hidden d-none" type="button">Upload new image</button>
-                    -->
-                    <hr>
-                    {% if current_user.can("create_or_edit_user") and ((not user.role.system) or current_user.role.system) %}
-                    <button onclick="toggleInitialVisability()" class="btn btn-secondary w-100 initial-shown" type="button"><i class="fa-solid fa-user-pen"></i> Edit User Details</button>
-                    {% endif %}
-                    {% if user.active and current_user.can("deactivate_user") and ((not user.role.system) or current_user.role.system) %}
-                    <button class="btn btn-danger w-100 mt-2" type="button"><i class="fa-solid fa-user-xmark"></i> Deactivate User Account</button>
-                    {% endif %}
-                    {% if ((not user.active) and current_user.can("manage_deactivated_users")) and ((not user.role.system) or current_user.role.system) %}
-                    <button class="btn btn-success w-100 mt-2" type="button"><i class="fa-solid fa-user-check"></i> Activate User Account</button>
-                    {% endif %}
+                    </svg>
+                        <!-- Profile picture help block
+                        <div class="small font-italic text-muted mb-4 initial-hidden d-none">JPG or PNG no larger than 5 MB</div>
+                        Profile picture upload button
+                        <button class="btn btn-primary initial-hidden d-none" type="button">Upload new image</button>
+                        -->
+                        <hr>
+                        {% if current_user.can("create_or_edit_user") and ((not user.role.system) or current_user.role.system) %}
+                            <button onclick="toggleInitialVisability()" class="btn btn-secondary w-100 initial-shown" type="button"><i
+                                    class="fa-solid fa-user-pen"></i>
+                                Edit User Details
+                            </button>
+                        {% endif %}
+                        {% if user.active and current_user.can("deactivate_user") and ((not user.role.system) or current_user.role.system) %}
+                            <button class="btn btn-danger w-100 mt-2" type="button"><i class="fa-solid fa-user-xmark"></i> Deactivate User Account</button>
+                        {% endif %}
+                        {% if ((not user.active) and current_user.can("manage_deactivated_users")) and ((not user.role.system) or current_user.role.system) %}
+                            <button class="btn btn-success w-100 mt-2" type="button"><i class="fa-solid fa-user-check"></i> Activate User Account</button>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-xl-8">
-            <!-- Account details card-->
-            <div class="card mb-4">
-                <div class="card-header">Account Details
-                </div>
-                <div class="card-body">
-                    <form>
-                        <!-- Form Group (username)-->
-                        <!-- Form Row-->
-                        <div class="row gx-3">
-                            <!-- Form Group (first name)-->
-                            <div class="col-md-6 mb-3">
-                                <label class="small mb-1" for="inputFirstName">First name</label>
-                                <div class="profile-details initial-shown">{{user.first_name}}</div>
-                                <input class="form-control initial-hidden d-none" id="inputFirstName" type="text" placeholder="Enter your first name" value="{{user.first_name}}">
+            <div class="col-xl-8">
+                <!-- Account details card-->
+                <div class="card mb-4">
+                    <div class="card-header">Account Details
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <!-- Form Group (username)-->
+                            <!-- Form Row-->
+                            <div class="row gx-3">
+                                <!-- Form Group (first name)-->
+                                <div class="col-md-6 mb-3">
+                                    <label class="small mb-1" for="inputFirstName">First name</label>
+                                    <div class="profile-details initial-shown">{{ user.first_name }}</div>
+                                    <input class="form-control initial-hidden d-none" id="inputFirstName" type="text" placeholder="Enter your first name"
+                                           value="{{ user.first_name }}">
+                                </div>
+                                <!-- Form Group (last name)-->
+                                <div class="col-md-6 mb-3">
+                                    <label class="small mb-1" for="inputLastName">Last name</label>
+                                    <div class="profile-details initial-shown">{{ user.last_name }}</div>
+                                    <input class="form-control initial-hidden d-none" id="inputLastName" type="text" placeholder="Enter your last name"
+                                           value="{{ user.last_name }}">
+                                </div>
                             </div>
-                            <!-- Form Group (last name)-->
-                            <div class="col-md-6 mb-3">
-                                <label class="small mb-1" for="inputLastName">Last name</label>
-                                <div class="profile-details initial-shown">{{user.last_name}}</div>
-                                <input class="form-control initial-hidden d-none" id="inputLastName" type="text" placeholder="Enter your last name" value="{{user.last_name}}">
+                            <!-- Form Row        -->
+                            <div class="row gx-3">
+                                <!-- Form Group (organization name)-->
+                                <div class="col-md-6 mb-3">
+                                    <label class="small mb-1" for="inputEmailAddress">Email address</label>
+                                    <div class="profile-details initial-shown">{{ user.email }}</div>
+                                    <input class="form-control initial-hidden d-none" id="inputEmailAddress" type="email" placeholder="Enter your email address"
+                                           value="{{ user.email }}">
+                                </div>
+                                <!-- Form Group (location)-->
+                                <div class="col-md-6 mb-3">
+                                    <label class="small mb-1" for="replacement-role-id">Role</label>
+                                    <div class="profile-details initial-shown">{{ user.role.name }}</div>
+                                    <select id="replacement-role-id" name="replacement-role-id" class="form-select initial-hidden d-none"
+                                            aria-label=".form-select-lg example">
+                                        {% for role in roles|reverse %}
+                                            {% if ((not role.system) and (not role.hidden) and role.active) or (current_user.role.system) %}
+                                                <option value="{{ role.uuid }}" {% if role.uuid== user.role.uuid %}selected{% endif %}>
+                                                    {% if (not role.active) %}DEACTIVATED -
+                                                    {% endif %}{{ role.name }}
+                                                </option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Form Row        -->
-                        <div class="row gx-3">
-                            <!-- Form Group (organization name)-->
-                            <div class="col-md-6 mb-3">
-                                <label class="small mb-1" for="inputEmailAddress">Email address</label>
-                                <div class="profile-details initial-shown">{{user.email}}</div>
-                                <input class="form-control initial-hidden d-none" id="inputEmailAddress" type="email" placeholder="Enter your email address" value="{{user.email}}">
-                            </div>
-                            <!-- Form Group (location)-->
-                            <div class="col-md-6 mb-3">
-                                <label class="small mb-1" for="replacement-role-id">Role</label>
-                                <div class="profile-details initial-shown">{{user.role.name}}</div>
-                                <select id="replacement-role-id" name="replacement-role-id" class="form-select initial-hidden d-none" aria-label=".form-select-lg example">
-                                      {% for role in roles|reverse %}
-                                        {% if ((not role.system) and (not role.hidden) and role.active) or (current_user.role.system) %}
-                                            <option value="{{role.uuid}}" {% if role.uuid == user.role.uuid %}selected{%endif%}>{% if (not role.active) %}DEACTIVATED - {%endif%}{{role.name}}</option>
-                                        {% endif %}
-                                      {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <!-- Form Group (email address)-->
+                            <!-- Form Group (email address)-->
 
-                        <!-- Form Row-->
-                        <!-- Save changes button-->
-                        <button class="btn btn-success float-end initial-hidden d-none" type="button"><i class="fa-solid fa-floppy-disk"></i> Save changes</button>
-                        <button onclick="toggleInitialVisability()" class="btn btn-secondary me-2 float-end initial-hidden d-none" type="button"><i class="fa-solid fa-xmark"></i> Cancel</button>
-                    </form>
+                            <!-- Form Row-->
+                            <!-- Save changes button-->
+                            <button class="btn btn-success float-end initial-hidden d-none" type="button"><i class="fa-solid fa-floppy-disk"></i> Save changes
+                            </button>
+                            <button onclick="toggleInitialVisability()" class="btn btn-secondary me-2 float-end initial-hidden d-none" type="button"><i
+                                    class="fa-solid fa-xmark"></i> Cancel
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
