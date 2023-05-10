@@ -73,8 +73,8 @@
                                     <label for="password">Password</label>
                                 </div>
                                 <div class="form-floating mb-2">
-                                    <input name="confirm-password" type="password" class="form-control" id="confirm-password"
-                                           required>
+                                    <input name="confirm-password" type="password" class="form-control" id="confirm-password" required
+                                           oninput="validatePassword({{ PASSWORD_MIN_CHARACTERS }}, {{ PASSWORD_MAX_CHARACTERS }}, {{ PASSWORD_REQUIRE_NUMERALS|string|lower }}, {{ PASSWORD_REQUIRE_UPPER_CASE|string|lower }}, {{ PASSWORD_REQUIRE_LOWER_CASE|string|lower }}, {{ PASSWORD_REQUIRE_SPECIAL_CHARACTERS|string|lower }}, '{{ PASSWORD_LIST_OF_ALLOWED_SPECIAL_CHARACTERS|safe }}')">
                                     <label for="confirm-password">Confirm Password</label>
                                 </div>
 
