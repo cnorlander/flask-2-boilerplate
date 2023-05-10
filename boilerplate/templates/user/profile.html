@@ -12,20 +12,22 @@
                     <div class="card-header">Profile Picture</div>
                     <div class="card-body text-center">
                         <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+
                         <!-- Profile picture image-->
                         <svg class="profile-picture profile profile-color-{{ user.id | profile_color_id }}" xmlns="http://www.w3.org/2000/svg"
                              xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
                              viewBox="0 0 500 500">
-                    <g>
-                        <circle id="circle" cx="250" cy="250" r="230"></circle>
-                        <text id="letter" x="51%" y="53%" text-anchor="middle" dy=".3em">{{ user.get_initials() }}</text>
-                    </g>
-                    </svg>
+                            <g>
+                                <circle id="circle" cx="250" cy="250" r="230"></circle>
+                                <text id="letter" x="51%" y="53%" text-anchor="middle" dy=".3em">{{ user.get_initials() }}</text>
+                            </g>
+                        </svg>
                         <!-- Profile picture help block
                         <div class="small font-italic text-muted mb-4 initial-hidden d-none">JPG or PNG no larger than 5 MB</div>
                         Profile picture upload button
                         <button class="btn btn-primary initial-hidden d-none" type="button">Upload new image</button>
                         -->
+
                         <hr>
                         {% if current_user.can("create_or_edit_user") and ((not user.role.system) or current_user.role.system) %}
                             <button onclick="toggleInitialVisability()" class="btn btn-secondary w-100 initial-shown" type="button"><i
@@ -34,10 +36,10 @@
                             </button>
                         {% endif %}
                         {% if user.active and current_user.can("deactivate_user") and ((not user.role.system) or current_user.role.system) %}
-                            <button class="btn btn-danger w-100 mt-2" type="button"><i class="fa-solid fa-user-xmark"></i> Deactivate User Account</button>
+                            <button class="btn btn-danger w-100 mt-2 initial-shown" type="button"><i class="fa-solid fa-user-xmark"></i> Deactivate User Account</button>
                         {% endif %}
                         {% if ((not user.active) and current_user.can("manage_deactivated_users")) and ((not user.role.system) or current_user.role.system) %}
-                            <button class="btn btn-success w-100 mt-2" type="button"><i class="fa-solid fa-user-check"></i> Activate User Account</button>
+                            <button class="btn btn-success w-100 mt-2 initial-shown" type="button"><i class="fa-solid fa-user-check"></i> Activate User Account</button>
                         {% endif %}
                     </div>
                 </div>
@@ -91,6 +93,27 @@
                                             {% endif %}
                                         {% endfor %}
                                     </select>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row gx-3 initial-shown">
+                                <div class="col-md-4 mb-3">
+                                    <label class="small mb-1">Account Status</label>
+                                    <div class="profile-details">
+                                        {% if user.active %}
+                                            <span class="text-success"><i class="fa-solid fa-user-check"></i> Account Active</span>
+                                        {% else %}
+                                            <span class="text-danger"><i class="fa-solid fa-user-xmark"></i> Account Deactivated</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="small mb-1">Last Login</label>
+                                    <div class="profile-details">{{ user.last_login }}</div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="small mb-1">Account Created</label>
+                                    <div class="profile-details">{{ user.creation_time }}</div>
                                 </div>
                             </div>
                             <!-- Form Group (email address)-->
