@@ -118,19 +118,19 @@
                                  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                  xml:space="preserve"
                                  viewBox="0 0 500 500">
-                    <g>
-                        <circle id="circle" cx="250" cy="250" r="230"></circle>
-                        <text id="letter" x="51%" y="53%" text-anchor="middle"
-                              dy=".3em">{{ user.get_initials() }}</text>
-                    </g>
-                    </svg>
+                                <g>
+                                    <circle id="circle" cx="250" cy="250" r="230"></circle>
+                                    <text id="letter" x="51%" y="53%" text-anchor="middle"
+                                          dy=".3em">{{ user.get_initials() }}</text>
+                                </g>
+                            </svg>
                             {{ user.first_name }} {{ user.last_name }}
                         </li>
                         <li data-label="role">{{ user.role.name }}</li>
                         <li data-label="email">{{ user.email }}</li>
-                        <li data-label="last logon">{{ user.last_login }}</li>
+                        <li data-label="last logon">{{ user.last_login | humanize_time  | title}}</li>
                         <li class="no-label" data-label="profile">
-                            <a class="btn btn-sm btn-primary" href="{{ url_for('get_user_profile', profile_uuid=user.uuid) }}">
+                            <a class="btn btn-sm btn-primary" href="{{ url_for('get_user_profile', user_uuid=user.uuid) }}">
                                 <i class="fa-solid fa-address-card"></i> View Profile
                             </a>
                         </li>
@@ -175,7 +175,7 @@
                                 <li data-label="email">{{ user.email }}</li>
                                 <li data-label="last logon">{{ user.last_login }}</li>
                                 <li class="no-label text-end" data-label="profile">
-                                    <a class="btn btn-sm btn-primary" href="{{ url_for('get_user_profile', profile_uuid=user.uuid) }}">
+                                    <a class="btn btn-sm btn-primary" href="{{ url_for('get_user_profile', user_uuid=user.uuid) }}">
                                         <i class="fa-solid fa-address-card"></i> View
                                     </a>
                                 </li>
