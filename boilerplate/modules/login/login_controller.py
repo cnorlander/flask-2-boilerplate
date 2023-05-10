@@ -1,7 +1,7 @@
 from boilerplate.app import app
 from flask import Flask, render_template, redirect, request, flash, abort, url_for, session
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-from boilerplate.modules.user.user_model import User, AnonymousUser, get_by_uuid, send_password_reset
+from boilerplate.modules.user.user_model import User, AnonymousUser, get_user_by_uuid, get_user_by_email, send_password_reset
 from boilerplate.utils.urls import is_safe_url
 from datetime import timedelta
 from flask import render_template
@@ -24,8 +24,7 @@ login_manager.anonymous_user = AnonymousUser
 
 @login_manager.user_loader
 def load_user(user_id: str):
-    current_user = get_by_uuid(user_id)
-    return get_by_uuid(user_id)
+    return get_user_by_uuid(user_id)
 
 # Sets session max length on every request
 @app.before_request
@@ -64,7 +63,7 @@ def post_login_user():
         return abort(400)
 
     # Get the user form the database.
-    db_user = User.query.filter_by(email=input_email).first()
+    db_user = get_user_by_email(input_email)
     # If the user is not in the database toss flash a login error and return them to the login screen.
     if not db_user:
         flash("The credentials you supplied are incorrect. Please check your username and password and try again.", "error")

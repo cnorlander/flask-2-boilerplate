@@ -2,6 +2,7 @@
 {% block title %}Users{% endblock %}
 {% block local_head %}
     <script src="/static/js/password-validate.js"></script>
+    <script src="/static/js/user.js"></script>
 {% endblock %}
 {% block content %}
     <article class="solid">
@@ -9,7 +10,7 @@
             <!-- ================================================================================================================================= -->
             <!--                                                      Create User Modal                                                           -->
             <!-- ================================================================================================================================= -->
-            <form action="{{ url_for('post_create_or_edit_role') }}" method="POST" id="create-user-form">
+            <form action="{{ url_for('post_create_user') }}" method="POST" id="create-user-form">
                 <div class="modal md-modal fade" tabindex="-1" id="create-user-modal">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -33,7 +34,7 @@
                                 </div>
                                 <hr>
                                 <h4>Role</h4>
-                                <select id="replacement-role-id" name="replacement-role-id"
+                                <select id="role-id" name="role-id"
                                         class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
                                     {% for role in roles|reverse %}
                                         {% if ((not role.system) and (not role.hidden) and role.active) or
@@ -65,6 +66,7 @@
                                         </li>
                                     {% endif %}
                                 </ul>
+                                <input type="hidden" id="passed-validity" value="false">
                                 <div class="form-floating mb-2">
                                     <input name="password" type="password" class="form-control" id="password" required
                                            oninput="validatePassword({{ PASSWORD_MIN_CHARACTERS }}, {{ PASSWORD_MAX_CHARACTERS }}, {{ PASSWORD_REQUIRE_NUMERALS|string|lower }}, {{ PASSWORD_REQUIRE_UPPER_CASE|string|lower }}, {{ PASSWORD_REQUIRE_LOWER_CASE|string|lower }}, {{ PASSWORD_REQUIRE_SPECIAL_CHARACTERS|string|lower }}, '{{ PASSWORD_LIST_OF_ALLOWED_SPECIAL_CHARACTERS|safe }}')">
@@ -81,7 +83,7 @@
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
                                         class="fa-solid fa-xmark"></i> Close
                                 </button>
-                                <button type="button" onclick="submitPermissionsForm()" class="btn btn-success"><i
+                                <button type="button" onclick="submitUserForm()" class="btn btn-success"><i
                                         class="fa-solid fa-floppy-disk"></i> Save Role
                                 </button>
                             </div>

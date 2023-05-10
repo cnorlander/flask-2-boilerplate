@@ -140,10 +140,13 @@ class AnonymousUser():
 # ==============================================================================================================================================================
 #                                                             Non-Class Utility Functions
 # ==============================================================================================================================================================
-def get_by_uuid(user_uuid):
+def get_user_by_uuid(user_uuid):
     if isinstance(user_uuid, str):
         user_uuid = uuid.UUID(user_uuid)
     return User.query.filter_by(uuid=user_uuid).first()
+
+def get_user_by_email(user_email):
+    return User.query.filter_by(email=user_email).first()
 
 def hash_password(password: str):
     salt = bcrypt.gensalt()
@@ -209,10 +212,11 @@ def create_if_not_exists(user: User):
         try:
             db.session.add(user)
             db.session.commit()
+            return True
         except IntegrityError:
             db.session.rollback()
             # Thar be threading afoot. Ignoring integrity errors here, other threads already having created the user.
-            return
+            return False
 
 
 # Generates a default user granting access to the app should there be no users in the database

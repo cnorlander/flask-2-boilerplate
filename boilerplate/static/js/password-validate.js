@@ -38,6 +38,10 @@ function validatePassword(passwordMinCharacters, passwordMaxCharacters, password
     }
     passwordRequirementsList.innerHTML = passwordRulesBrokenHTML;
 
-    if (passwordRulesBroken.length == 0) return true;
+    if (passwordRulesBroken.length === 0){
+        document.getElementById("passed-validity").value = "true"
+        return true;
+    }
+    document.getElementById("passed-validity").value = "false"
     return false
 }

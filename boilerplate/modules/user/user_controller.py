@@ -4,8 +4,9 @@ from boilerplate.modules.role.role_model import Role
 from boilerplate.modules.role.role_actions import register_action
 from flask import render_template, request, flash, redirect, url_for, abort
 from flask_login import login_required, current_user
+from boilerplate.modules.role.role_model import get_role_by_uuid
 from boilerplate.modules.role.role_decorators import require_action
-from boilerplate.modules.user.user_model import User, send_password_reset, get_by_uuid, check_password_requirements
+from boilerplate.modules.user.user_model import User, send_password_reset, get_user_by_uuid, check_password_requirements, get_user_by_email, create_if_not_exists
 from boilerplate.utils.email import validate_address
 from boilerplate.utils.urls import validate_uuid
 from sqlalchemy.sql import func
@@ -52,6 +53,59 @@ def get_user_profile(profile_uuid: str):
     roles = Role.query.all()
     return render_template("user/profile.html", user=user, roles=roles)
 
+@app.post('/users/create')
+@login_required
+@require_action("create_or_edit_user")
+def post_create_user():
+    user_first_name = request.form.get("first-name")
+    user_last_name = request.form.get("last-name")
+    user_email = request.form.get("email")
+    user_role = request.form.get("role-id")
+    user_password = request.form.get("password")
+    print(user_email, user_first_name, user_last_name, user_role, user_password, validate_address(user_email))
+    if (not user_first_name) or (not user_last_name) or (not user_email) or (not user_role) or (not user_password) or (not validate_address(user_email)):
+        return abort(400)
+
+    # Check for existing user
+    existing_user = get_user_by_email(user_email)
+    if existing_user:
+        error_string = f'A user with the email address "{user_email}" already exists. '
+        if not existing_user.active:
+            error_string = f'A user with the email address "{user_email}" already exists and is deactivated. '
+            if not current_user.can("manage_deactivated_users"):
+                error_string += 'You will need an admin or someone with the Manage Disabled Users permission to activate the account.'
+        flash(error_string, "error")
+        return redirect(url_for("get_user_list"))
+
+    # Make sure password rules are followed
+    password_rules_broken = check_password_requirements(user_password)
+    if len(password_rules_broken) > 0:
+        flash(f"Please ensure your password meets the following rules: {render_template('components/list.html', list=password_rules_broken)}", "error")
+        return redirect(url_for("get_user_list"))
+
+    # Ensure the role exists and is active
+    existing_role = get_role_by_uuid(user_role)
+    if (not existing_role) or (not existing_role.active):
+        flash(f"The role you selected for the new user could not be found, longer exists or is not active. Please try again.", "error")
+        return redirect(url_for("get_user_list"))
+
+    # Ensure the user is not giving someone a role they shouldn't be able to
+    if (existing_role.hidden or existing_role.system) and not current_user.role.system:
+        return abort(403)
+
+    # Create the user
+    is_created = create_if_not_exists(User(user_email, user_first_name, user_last_name, user_password, existing_role))
+
+    # If a DB error occured tell the user
+    if not is_created:
+        flash(f"A database error occured while creating the user. Please try again otherwise contact an admin.", "error")
+        return redirect(url_for("get_user_list"))
+
+    # Success!
+    flash(f"User created successfully!", "success")
+    return redirect(url_for("get_user_list"))
+
+
 @app.get('/password-reset')
 def get_password_reset_screen():
     user_uuid = request.args.get("uuid")
@@ -61,7 +115,7 @@ def get_password_reset_screen():
         return abort(400)
 
     # Lookup the correct user and ensure they exist
-    user = get_by_uuid(user_uuid)
+    user = get_user_by_uuid(user_uuid)
     if not user:
         return abort(403)
 
@@ -94,7 +148,7 @@ def post_complete_password_reset():
         return abort(400)
 
     # Lookup the correct user and ensure they exist
-    user = get_by_uuid(user_uuid)
+    user = get_user_by_uuid(user_uuid)
     if not user:
         return abort(403)
 
